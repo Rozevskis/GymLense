@@ -6,8 +6,6 @@ import { AnimatePresence, motion } from "framer-motion"
 
 import Name from "@/components/user/account-dropdown/Name"
 
-import Image from "next/image"
-
 export default function AccountDropdown() {
     const [isOpen, setIsOpen] = useState(false)
 
