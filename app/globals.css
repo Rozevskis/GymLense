@@ -24,13 +24,13 @@
   }
 
   .subheading {
-    @apply text-[37px];
-  }
-  .paragraph {
     @apply text-[23px];
   }
-  .subtext {
+  .paragraph {
     @apply text-[19px];
+  }
+  .subtext {
+    @apply text-[14px];
   }
 
   /* inputs */
@@ -61,6 +61,12 @@
   .dialog-input:active {
     border: 2px solid var(--accent);
     transition: 0.2s ease-in-out;
+  }
+  .border-top {
+    border-top: 1px solid rgba(0,0,0,0.25);
+  }
+  .border-bottom {
+    border-bottom: 1px solid rgba(0,0,0,0.25);
   }
 }
 

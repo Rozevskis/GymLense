@@ -4,11 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
-import Height from "@/components/user/health-dropdown/Height"
-import Weight from "@/components/user/health-dropdown/Weight"
-import Sex from "@/components/user/health-dropdown/Sex"
-import Age from "@/components/user/health-dropdown/Age"
-import FitnessLevel from "@/components/user/health-dropdown/FitnessLevel"
+import Name from "@/components/user/account-dropdown/Name"
 
 
 export default function HealthDropdown() {
@@ -19,10 +15,10 @@ export default function HealthDropdown() {
     }
     return (
         // health dropdown container
-        <div className="flex flex-col w-full p-4">
+        <div className="flex flex-col w-full p-4 border-top">
             {/* health dropdown header */}
             <button className="flex flex-row justify-between items-center cursor-pointer py-4" onClick={toggleOpen}>
-                <p className="paragraph">Health details</p>
+                <p className="paragraph">Account details</p>
                 <motion.img 
                 initial={{ rotate: 0 }} 
                 animate={ isOpen ? {rotate: 90} : { rotate: 0 } } src="/arrow.svg" height={36} width={36} alt="Health details dropdown"/>
@@ -31,11 +27,7 @@ export default function HealthDropdown() {
             {
                 isOpen &&
                 <>
-                        <Weight />
-                        <Height />
-                        <Sex />
-                        <Age />
-                        <FitnessLevel />
+                    <Name />
                 </>
             }
             </AnimatePresence>
