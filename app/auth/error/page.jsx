@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function AuthError() {
+function ErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
 
@@ -27,5 +28,13 @@ export default function AuthError() {
         Try Again
       </Link>
     </div>
+  );
+}
+
+export default function AuthError() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[70vh]">Loading...</div>}>
+      <ErrorContent />
+    </Suspense>
   );
 }
