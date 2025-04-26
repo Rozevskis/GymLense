@@ -1,8 +1,5 @@
 import "@/app/globals.css";
 import { Inter } from "next/font/google";
-import DashFooter from "@/components/DashFooter";
-import DashHeader from "@/components/DashHeader";
-import { AuthProvider } from "@/components/AuthProvider";
 
 export const metadata = {
   title: "GymLense - AI Workout Assistant",
@@ -15,9 +12,7 @@ export default function SignInLayout({ children }) {
       <body
         className={`antialiased max-w-lg bg-[var(--background)] flex justify-center items-center w-full min-h-[100dvh] relative`}
       >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );
