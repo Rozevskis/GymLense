@@ -36,9 +36,8 @@ try {
 //   }
 // }
 
-export async function POST(req) {
-  // Sample response
-  return NextResponse.json({
+const sampleResponse = {
+
     "name_of_equipment": "Barbell Bench Press",
     "description": "A common gym exercise used to build strength in the upper body.",
     "targeted_muscles": {
@@ -83,12 +82,38 @@ export async function POST(req) {
       "Do not bounce the bar off your chest."
     ],
     "recommended_warmup": "5-10 minutes of light cardio and dynamic stretches for the upper body."
-  });
-  //END Sample response
+};
+
+export async function POST(req) {
   try {
-    const formData = await req.formData();
+    // Check OpenAI initialization first
+    if (!openai && !process.env.OPENAI_API_KEY) {
+      console.error('OpenAI API key is missing');
+      return NextResponse.json(
+        { error: 'OpenAI API key is not configured. Please add it to your environment variables.' },
+        { status: 500 }
+      );
+    }
+
+    // Parse form data
+    let formData;
+    try {
+      formData = await req.formData();
+    } catch (error) {
+      console.error('Failed to parse form data:', error);
+      return NextResponse.json(
+        { error: 'Failed to parse form data: ' + error.message },
+        { status: 400 }
+      );
+    }
+
+    const useSampleResponse = formData.get('useSampleResponse') === 'true';
     const imageFile = formData.get('image');
-    const userProfileData = formData.get('user_profile');
+    const userProfileData = formData.get('userProfile');
+
+    if (useSampleResponse) {
+      return NextResponse.json(sampleResponse);
+    }
 
     if (!userProfileData) {
       return NextResponse.json({ error: 'No user profile provided' }, { status: 400 });
@@ -100,19 +125,23 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Convert image to buffer
-    const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
-    
-    // Optimize image
-    const imageResult = await optimizeImage(imageBuffer, true);
-    
-    // Log optimization details
-    console.log('Image optimization results:', {
-      originalSize: Math.round(imageResult.originalSize / 1024) + 'KB',
-      optimizedSize: Math.round(imageResult.optimizedSize / 1024) + 'KB',
-      dimensions: `${imageResult.optimizedWidth}x${imageResult.optimizedHeight}`,
-      compressionRatio: imageResult.compressionRatio + 'x'
-    });
+    // Convert image to buffer and optimize
+    let imageResult;
+    try {
+      const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+      imageResult = await optimizeImage(imageBuffer, true);
+      
+      // Log optimization details
+      console.log('Image optimization results:', {
+        originalSize: Math.round(imageResult.originalSize / 1024) + 'KB',
+        optimizedSize: Math.round(imageResult.optimizedSize / 1024) + 'KB',
+        dimensions: `${imageResult.optimizedWidth}x${imageResult.optimizedHeight}`,
+        compressionRatio: imageResult.compressionRatio + 'x'
+      });
+    } catch (error) {
+      console.error('Image optimization failed:', error);
+      return NextResponse.json({ error: 'Failed to process image: ' + error.message }, { status: 400 });
+    }
 
     // Check if OpenAI is initialized
     if (!openai) {
@@ -122,18 +151,38 @@ export async function POST(req) {
     }
 
     const openAIRequest = {
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are a professional personal trainer. Analyze the image of gym equipment and create a workout plan. The user's profile is: ${JSON.stringify(user_profile)}. Include specific weight numbers based on the user's weight, not percentages or 1RM values.`
+          content: `You are a professional personal trainer. Analyze the image of gym equipment and create a workout plan. The user's profile is: ${JSON.stringify(userProfile)}. Include specific weight numbers based on the user's weight, not percentages or 1RM values.`
         },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: "What exercise can I do with this equipment? Please provide a detailed workout plan."
+              text: `Analyze this gym equipment and provide a workout plan in this exact JSON format:
+{
+  "name_of_equipment": "Equipment Name",
+  "description": "Brief description",
+  "targeted_muscles": {
+    "primary": ["muscle1", "muscle2"],
+    "secondary": ["muscle3", "muscle4"]
+  },
+  "recommended_repetitions": [
+    {
+      "set": 1,
+      "type": "warm-up/working",
+      "weight": "specific weight in kg",
+      "repetitions": "number",
+      "rest_time": "duration"
+    }
+  ],
+  "form_tips": ["tip1", "tip2"],
+  "safety_considerations": ["safety1", "safety2"],
+  "recommended_warmup": "warmup description"
+}`
             },
             {
               type: "image_url",
@@ -153,13 +202,17 @@ export async function POST(req) {
       try {
         // Get the response content and clean it up
         const responseContent = response.choices[0].message.content;
-        const cleanedContent = responseContent.replace(/```json\n|```/g, '').trim();
-        const jsonResponse = JSON.parse(cleanedContent);
+        // Try to find JSON in the response
+        const jsonMatch = responseContent.match(/\{[\s\S]*\}/m);
+        if (!jsonMatch) {
+          throw new Error('No JSON found in response');
+        }
+        const jsonResponse = JSON.parse(jsonMatch[0]);
         return NextResponse.json(jsonResponse);
       } catch (parseError) {
         console.error('Failed to parse AI response:', response.choices[0].message.content);
         return NextResponse.json(
-          { error: 'Invalid response format from AI' },
+          { error: 'Invalid response format from AI. Please try again.' },
           { status: 500 }
         );
       }

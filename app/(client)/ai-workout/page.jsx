@@ -24,6 +24,7 @@ export default function AIWorkout() {
   const [userProfile] = useState(DEFAULT_USER_PROFILE);
   const [capturedImage, setCapturedImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [useSampleResponse, setUseSampleResponse] = useState(true);
   const webcamRef = useRef(null);
   
   useEffect(() => {
@@ -70,13 +71,14 @@ export default function AIWorkout() {
 
     try {
       // Convert base64 to blob
-      const base64Response = await fetch(capturedImage);
-      const blob = await base64Response.blob();
+      const base64Data = capturedImage.split(',')[1];
+      const blob = await fetch(`data:image/jpeg;base64,${base64Data}`).then(res => res.blob());
 
       // Create form data
       const formData = new FormData();
       formData.append('image', blob, 'equipment.jpg');
-      formData.append('user_profile', JSON.stringify(userProfile));
+      formData.append('userProfile', JSON.stringify(userProfile));
+      formData.append('useSampleResponse', useSampleResponse);
 
       const response = await fetch('/api/ai/generate-workout', {
         method: 'POST',
@@ -84,12 +86,14 @@ export default function AIWorkout() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate workout');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate workout');
       }
 
       const data = await response.json();
       setResult(data);
     } catch (err) {
+      console.error('API error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -186,6 +190,21 @@ export default function AIWorkout() {
   return (
     <div className="container mx-auto p-4 bg-slate-100">
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Development Toggle */}
+        <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-4">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={useSampleResponse}
+              onChange={(e) => setUseSampleResponse(e.target.checked)}
+              className="w-4 h-4 text-blue-600"
+            />
+            <span className="text-yellow-800">
+              Use sample response (development only)
+            </span>
+          </label>
+        </div>
+
         {/* Camera UI */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Take a Picture of Equipment</h2>

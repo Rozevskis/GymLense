@@ -2,8 +2,8 @@ import sharp from 'sharp';
 
 export async function optimizeImage(imageInput, returnDetails = false) {
   try {
-    // First get image metadata and stats
-    const originalImage = sharp(Buffer.isBuffer(imageInput) ? imageInput : imageInput);
+    // Handle both file paths and buffers
+    const originalImage = sharp(imageInput);
     const metadata = await originalImage.metadata();
     const stats = await originalImage.stats();
     const originalBuffer = await originalImage.toBuffer();
@@ -24,15 +24,14 @@ export async function optimizeImage(imageInput, returnDetails = false) {
     }
 
     // Optimize the image
-    const optimizedBuffer = await sharp(imagePath)
+    const optimizedBuffer = await sharp(originalBuffer)
       .resize(width, height, {
         fit: 'inside',
         withoutEnlargement: true
       })
       .jpeg({
-        quality: 85,
-        progressive: true,
-        chromaSubsampling: '4:2:0' // Better compression
+        quality: 80,
+        progressive: true
       })
       .toBuffer();
 
