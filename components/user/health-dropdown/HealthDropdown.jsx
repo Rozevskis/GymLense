@@ -8,8 +8,6 @@ import Sex from "@/components/user/health-dropdown/Sex"
 import Age from "@/components/user/health-dropdown/Age"
 import FitnessLevel from "@/components/user/health-dropdown/FitnessLevel"
 
-import Image from "next/image"
-
 export default function HealthDropdown() {
     const [isOpen, setIsOpen] = useState(false)
 
