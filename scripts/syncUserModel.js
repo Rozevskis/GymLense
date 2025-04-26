@@ -8,7 +8,11 @@ if (!uri) {
 }
 
 async function syncUserModel() {
-  const client = new MongoClient(uri);
+  const client = new MongoClient(uri, {
+    ssl: true,
+    tls: true,
+    tlsAllowInvalidCertificates: true
+  });
 
   try {
     await client.connect();
@@ -16,23 +20,31 @@ async function syncUserModel() {
 
     const db = client.db();
     
-    // Drop the existing users collection
-    try {
-      await db.collection('users').drop();
-      console.log('Dropped existing users collection');
-    } catch (error) {
-      console.log('No existing users collection to drop');
+    // Drop existing NextAuth collections
+    const collections = ['users', 'accounts', 'sessions', 'verification_tokens'];
+    for (const collection of collections) {
+      try {
+        await db.collection(collection).drop();
+        console.log(`Dropped existing ${collection} collection`);
+      } catch (error) {
+        console.log(`No existing ${collection} collection to drop`);
+      }
     }
 
-    // Create new users collection
-    await db.createCollection('users');
-    console.log('Created new users collection');
+    // Create collections
+    for (const collection of collections) {
+      await db.createCollection(collection);
+      console.log(`Created ${collection} collection`);
+    }
 
     // Create indexes
     await db.collection('users').createIndex({ email: 1 }, { unique: true });
-    console.log('Created email index');
+    await db.collection('accounts').createIndex({ provider: 1, providerAccountId: 1 }, { unique: true });
+    await db.collection('sessions').createIndex({ sessionToken: 1 }, { unique: true });
+    await db.collection('verification_tokens').createIndex({ identifier: 1, token: 1 }, { unique: true });
 
-    console.log('Successfully synced User model with MongoDB');
+    console.log('Successfully created all indexes');
+    console.log('Successfully synced NextAuth collections with MongoDB');
   } catch (error) {
     console.error('Error:', error);
   } finally {

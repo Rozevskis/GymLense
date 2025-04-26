@@ -18,19 +18,40 @@ const handler = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   callbacks: {
     async session({ session, user }) {
-      // Add user data to session
-      session.user.id = user.id;
+      if (session?.user) {
+        session.user.id = user.id;
+      }
       return session;
     },
     async signIn({ account, profile }) {
-      if (account.provider === "google") {
-        return profile.email_verified;
+      try {
+        if (account.provider === "google") {
+          return profile.email_verified;
+        }
+        return true;
+      } catch (error) {
+        console.error("SignIn error:", error);
+        return false;
       }
-      return true;
     },
   },
   pages: {
     signIn: '/signin',
+    error: '/auth/error',
+  },
+  debug: process.env.NODE_ENV === 'development',
+  logger: {
+    error: (code, ...message) => {
+      console.error(code, ...message);
+    },
+    warn: (code, ...message) => {
+      console.warn(code, ...message);
+    },
+    debug: (code, ...message) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.debug(code, ...message);
+      }
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

@@ -1,15 +1,28 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
+  // NextAuth required fields
+  name: String,
   email: {
     type: String,
-    required: true,
     unique: true,
   },
-  name: {
-    type: String,
-    required: true,
-  },
+  emailVerified: Date,
+  image: String,
+  accounts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Account',
+    },
+  ],
+  sessions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Session',
+    },
+  ],
+
+  // Custom fields
   weight: {
     type: Number,
     min: 20,
