@@ -9,9 +9,12 @@ if (!uri) {
 
 async function syncUserModel() {
   const client = new MongoClient(uri, {
-    ssl: true,
-    tls: true,
-    tlsAllowInvalidCertificates: true
+    maxPoolSize: 10,
+    serverApi: {
+      version: '1',
+      strict: true,
+      deprecationErrors: true
+    }
   });
 
   try {
