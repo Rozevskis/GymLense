@@ -7,6 +7,22 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// Demo endpoint to test image optimization
+// export async function GET(req) {
+//   try {
+//     const imagePath = path.join(process.cwd(), 'public', 'sampleimage', 'benchpress.jpg');
+//     const imageDetails = await optimizeImage(imagePath, true);
+    
+//     return NextResponse.json({
+//       message: 'Image optimization details',
+//       details: imageDetails
+//     });
+//   } catch (error) {
+//     console.error('Demo endpoint error:', error);
+//     return NextResponse.json({ error: error.message }, { status: 500 });
+//   }
+// }
+
 export async function POST(req) {
   // Sample response
   return NextResponse.json({
@@ -59,9 +75,17 @@ export async function POST(req) {
   try {
     const { user_profile } = await req.json();
 
-    // Get optimized image
+    // Get optimized image with details for logging
     const imagePath = path.join(process.cwd(), 'public', 'sampleimage', 'benchpress.jpg');
-    const base64Image = await optimizeImage(imagePath);
+    const imageResult = await optimizeImage(imagePath, true);
+    
+    // Log optimization details
+    console.log('Image optimization results:', {
+      originalSize: Math.round(imageResult.originalSize / 1024) + 'KB',
+      optimizedSize: Math.round(imageResult.optimizedSize / 1024) + 'KB',
+      dimensions: `${imageResult.optimizedWidth}x${imageResult.optimizedHeight}`,
+      compressionRatio: imageResult.compressionRatio + 'x'
+    });
 
     const openAIRequest = {
       model: "gpt-4o",
@@ -112,7 +136,7 @@ Strictly respect JSON formatting and field names.`
             {
               type: "image_url",
               image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
+                url: `data:image/jpeg;base64,${imageResult.base64Data}`
               }
             }
           ]
