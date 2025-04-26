@@ -188,7 +188,7 @@ export default function AIWorkout() {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-slate-100">
+    <div className="container mx-auto p-4 bg-slate-100 min-h-[100dvh]">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Development Toggle */}
         <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-4">
@@ -304,18 +304,6 @@ export default function AIWorkout() {
             <div>Age: {userProfile.age} years</div>
             <div>Fitness Level: {userProfile.fitness_level}</div>
             <div>Sex: {userProfile.sex}</div>
-          </div>
-        </div>
-
-        <div className="border rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-2 text-gray-900">Equipment Image</h2>
-          <div className="relative w-full h-[300px]">
-            <Image
-              src="/sampleimage/benchpress.jpg"
-              alt="Bench Press Equipment"
-              fill
-              className="object-contain rounded-lg"
-            />
           </div>
         </div>
 
