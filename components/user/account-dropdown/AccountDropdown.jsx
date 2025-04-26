@@ -1,4 +1,6 @@
 "use client"
+import Image from "next/image"
+
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 
@@ -12,6 +14,7 @@ export default function AccountDropdown() {
     const toggleOpen = () => setIsOpen(!isOpen)
 
     return (
+        // health dropdown container
         <div className="flex flex-col w-full p-4 border-top">
             {/* Header */}
             <button className="flex flex-row justify-between items-center cursor-pointer py-4" onClick={toggleOpen}>
