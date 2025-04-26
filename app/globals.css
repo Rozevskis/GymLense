@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,10 +7,32 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: #FFF8F8;
+  --foreground: #000000;
+  --accent: #0118D8;
+}
+
+@layer utilities {
+  /* typography */
+  .heading {
+    @apply text-[60px];
+  }
+  .blue-span {
+    @apply text-[var(--accent)];
+  }
+
+  .subheading {
+    @apply text-[24px];
+  }
+  .paragraph {
+    @apply text-[19px];
+  }
+
+  /* inputs */
+  .sign-in-button {
+    @apply text-[19px] rounded-4xl py-2 my-5 w-full cursor-pointer;
+    border: 2px solid black;
   }
 }
 
