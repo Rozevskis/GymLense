@@ -3,7 +3,12 @@ import { NextResponse } from 'next/server';
 export async function middleware(request) {
   const path = request.nextUrl.pathname;
 
-  // Check if it's an API request
+  // Skip auth routes like /api/auth/*
+  if (path.startsWith('/api/auth/')) {
+    return NextResponse.next();
+  }
+
+  // Protect other API routes
   if (path.startsWith('/api/')) {
     const referer = request.headers.get('referer');
     const apiKey = request.headers.get('x-api-key');
@@ -34,7 +39,6 @@ export async function middleware(request) {
 
 export const config = {
   matcher: [
-    // Add protected routes here
     '/api/:path*',
     '/dashboard/:path*',
     '/profile/:path*',
