@@ -16,9 +16,7 @@ export default function SignInLayout({ children }) {
         className={`antialiased max-w-lg bg-[var(--background)] flex justify-center items-center w-full min-h-[100dvh] relative`}
       >
         <AuthProvider>
-          <DashHeader />
           {children}
-          <DashFooter />
         </AuthProvider>
       </body>
     </html>
