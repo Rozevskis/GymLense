@@ -31,7 +31,11 @@ const UserSchema = new mongoose.Schema({
     enum: ['beginner', 'intermediate', 'advanced'],
     default: 'beginner',
   },
-  // Sex will be added in a different page later
+  sex: {
+    type: String,
+    enum: ['male', 'female', 'other'],
+    default: 'male',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

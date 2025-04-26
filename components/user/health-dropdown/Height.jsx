@@ -4,14 +4,27 @@ import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function HeightPicker({ height = 179 }) {
+export default function HeightPicker({ height = 179, onHeightChange, onSave }) {
     const [heightOpen, setHeightOpen] = useState(false)
     const [selectedHeight, setSelectedHeight] = useState(height)
+
+    // Update selected height when prop changes
+    useEffect(() => {
+        setSelectedHeight(height)
+    }, [height])
 
     const handleClose = () => setHeightOpen(false)
     const handleOpen = () => setHeightOpen(true)
 
     const handleSave = () => {
+        // Pass the updated height to parent component
+        if (onHeightChange) {
+            onHeightChange(Number(selectedHeight))
+        }
+        // Call the save function from parent
+        if (onSave) {
+            onSave()
+        }
         setHeightOpen(false)
     }
 

@@ -4,10 +4,15 @@ import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function AgePicker({ initialAge = 10 }) {
+export default function AgePicker({ initialAge = 10, onAgeChange, onSave }) {
     const [ageOpen, setAgeOpen] = useState(false)
     const [selectedDate, setSelectedDate] = useState("")
     const [age, setAge] = useState(initialAge)
+
+    // Update age when prop changes
+    useEffect(() => {
+        setAge(initialAge)
+    }, [initialAge])
 
     const handleClose = () => setAgeOpen(false)
     const handleOpen = () => setAgeOpen(true)
@@ -16,7 +21,18 @@ export default function AgePicker({ initialAge = 10 }) {
         if (selectedDate) {
             const calculatedAge = calculateAge(selectedDate)
             setAge(calculatedAge)
+            
+            // Pass the updated age to parent component
+            if (onAgeChange) {
+                onAgeChange(calculatedAge)
+            }
         }
+        
+        // Call the save function from parent
+        if (onSave) {
+            onSave()
+        }
+        
         setAgeOpen(false)
     }
 

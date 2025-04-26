@@ -1,12 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function FitnessLevel({ sex=1 }) {
-    const [fitnessLevelOpen, setFitnessLevelOpen] = useState(false)
+export default function SexPicker({ sex = "male", onSexChange, onSave }) {
+    const [sexOpen, setSexOpen] = useState(false)
     const [selected, setSelected] = useState(1)
+
+    // Convert sex string to number for UI
+    useEffect(() => {
+        if (sex === "male") setSelected(1)
+        else if (sex === "female") setSelected(2)
+        else if (sex === "other") setSelected(3)
+    }, [sex])
 
     const numToLevel = (num) => {
         if (num === 1) return "Male"
@@ -18,9 +25,25 @@ export default function FitnessLevel({ sex=1 }) {
         setSelected(num)
     }
 
-    const handleClose = () => setFitnessLevelOpen(false)
-    const handleOpen = () => setFitnessLevelOpen(true)
-    const handleSave = () => setFitnessLevelOpen(false)
+    const handleClose = () => setSexOpen(false)
+    const handleOpen = () => setSexOpen(true)
+    
+    const handleSave = () => {
+        // Convert number to string value for database
+        const sexValue = selected === 1 ? "male" : selected === 2 ? "female" : "other"
+        
+        // Pass the updated sex to parent component
+        if (onSexChange) {
+            onSexChange(sexValue)
+        }
+        
+        // Call the save function from parent
+        if (onSave) {
+            onSave()
+        }
+        
+        setSexOpen(false)
+    }
 
     // Position for the highlight div
     const getHighlightPosition = () => {
@@ -49,7 +72,7 @@ export default function FitnessLevel({ sex=1 }) {
             </button>
 
             <AnimatePresence>
-            {fitnessLevelOpen && (
+            {sexOpen && (
                 <motion.div 
                     initial={{ opacity: 0 }} 
                     animate={{ opacity: 1 }} 

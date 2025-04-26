@@ -1,12 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function FitnessLevel({ fitnessLevel = "intermediate" }) {
+export default function FitnessLevel({ fitnessLevel = "intermediate", onFitnessLevelChange, onSave }) {
     const [fitnessLevelOpen, setFitnessLevelOpen] = useState(false)
-    const [selected, setSelected] = useState(1)
+    const [selected, setSelected] = useState(2) // Default to intermediate (2)
+
+    // Convert fitnessLevel string to number for UI
+    useEffect(() => {
+        if (fitnessLevel === "beginner") setSelected(1)
+        else if (fitnessLevel === "intermediate") setSelected(2)
+        else if (fitnessLevel === "advanced") setSelected(3)
+    }, [fitnessLevel])
 
     const numToLevel = (num) => {
         if (num === 1) return "Unfit"
@@ -20,7 +27,19 @@ export default function FitnessLevel({ fitnessLevel = "intermediate" }) {
 
     const handleClose = () => setFitnessLevelOpen(false)
     const handleOpen = () => setFitnessLevelOpen(true)
-    const handleSave = () => setFitnessLevelOpen(false)
+    const handleSave = () => {
+        // Pass the updated fitness level to parent component
+        if (onFitnessLevelChange) {
+            onFitnessLevelChange(selected)
+        }
+        
+        // Call the save function from parent
+        if (onSave) {
+            onSave()
+        }
+        
+        setFitnessLevelOpen(false)
+    }
 
     // Position for the highlight div
     const getHighlightPosition = () => {

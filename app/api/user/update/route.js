@@ -15,7 +15,7 @@ export async function PUT(req) {
       );
     }
 
-    const { weight, height, age, fitnessLevel } = await req.json();
+    const { weight, height, age, fitnessLevel, sex } = await req.json();
     
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
@@ -24,7 +24,8 @@ export async function PUT(req) {
         weight, 
         height, 
         age, 
-        fitnessLevel 
+        fitnessLevel,
+        sex
       },
       { new: true, runValidators: true }
     );
@@ -44,7 +45,8 @@ export async function PUT(req) {
       weight: updatedUser.weight,
       height: updatedUser.height,
       age: updatedUser.age,
-      fitnessLevel: updatedUser.fitnessLevel
+      fitnessLevel: updatedUser.fitnessLevel,
+      sex: updatedUser.sex
     };
 
     return NextResponse.json({ 
