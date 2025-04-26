@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
+import Webcam from 'react-webcam';
 
 const DEFAULT_USER_PROFILE = {
   weight: 73,
@@ -23,43 +24,38 @@ export default function AIWorkout() {
   const [userProfile] = useState(DEFAULT_USER_PROFILE);
   const [capturedImage, setCapturedImage] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setShowCamera(true);
+  const webcamRef = useRef(null);
+  
+  useEffect(() => {
+    // Cleanup camera when component unmounts
+    return () => {
+      if (showCamera) {
+        stopCamera();
       }
-    } catch (err) {
-      setError('Failed to access camera: ' + err.message);
-    }
+    };
+  }, []);
+
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: 'environment'
+  };
+
+  const startCamera = () => {
+    setShowCamera(true);
   };
 
   const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      const tracks = videoRef.current.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
-      videoRef.current.srcObject = null;
-      setShowCamera(false);
-    }
+    setShowCamera(false);
   };
 
-  const captureImage = () => {
-    if (videoRef.current && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const video = videoRef.current;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
-      
-      const imageData = canvas.toDataURL('image/jpeg');
-      setCapturedImage(imageData);
-      stopCamera();
+  const captureImage = useCallback(() => {
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+      setCapturedImage(imageSrc);
+      setShowCamera(false);
     }
-  };
+  }, [webcamRef]);
 
   const generateWorkout = async (e) => {
     e.preventDefault();
@@ -197,11 +193,12 @@ export default function AIWorkout() {
           {showCamera ? (
             <div className="space-y-4">
               <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
+                <Webcam
+                  ref={webcamRef}
+                  audio={false}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={videoConstraints}
+                  className="w-full h-full object-cover"
                 />
               </div>
               <button
@@ -251,8 +248,7 @@ export default function AIWorkout() {
           )}
         </div>
 
-        {/* Hidden canvas for image processing */}
-        <canvas ref={canvasRef} className="hidden" />
+
 
         {/* Error display */}
         {error && (

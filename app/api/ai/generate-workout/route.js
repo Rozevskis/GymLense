@@ -86,10 +86,15 @@ export async function POST(req) {
   });
   //END Sample response
   try {
-    const { user_profile } = await req.json();
     const formData = await req.formData();
     const imageFile = formData.get('image');
-    const userProfile = JSON.parse(formData.get('user_profile'));
+    const userProfileData = formData.get('user_profile');
+
+    if (!userProfileData) {
+      return NextResponse.json({ error: 'No user profile provided' }, { status: 400 });
+    }
+
+    const userProfile = JSON.parse(userProfileData);
 
     if (!imageFile) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
