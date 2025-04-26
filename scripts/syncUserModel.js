@@ -10,6 +10,9 @@ if (!uri) {
 async function syncUserModel() {
   const client = new MongoClient(uri, {
     maxPoolSize: 10,
+    tls: true,
+    tlsAllowInvalidCertificates: true,
+    serverSelectionTimeoutMS: 5000,
     serverApi: {
       version: '1',
       strict: true,
