@@ -1,16 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
-@import "tailwindcss";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-}
+@import "tailwindcss";
 
 :root {
   --background: #FFF8F8;
   --foreground: #000000;
   --accent: #0118D8;
   --background-darker: #E6DFDF;
+  font-family: 'Bricolage Grotesque', sans-serif;
 }
 
 @layer utilities {
@@ -45,7 +43,6 @@
   /* misc */
   .blur-div {
     background-color: rgba(1,1,1,0.1);
-    backdrop-filter: blur(100px);
   }
   .dialog-footer {
     border-top: 2px solid rgba(0,0,0,0.25);
@@ -66,6 +63,21 @@
   }
   .border-bottom {
     border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  .loader {
+    transform-origin: center center;
+    transform-origin: 100% 100%;
+    display: inline-block;
+    animation: loaderRotate 1s linear infinite;
+  }
+}
+
+@keyframes loaderRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
