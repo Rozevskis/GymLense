@@ -6,34 +6,20 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env');
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
 export async function connectToDatabase() {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-      tls: true,
-      tlsAllowInvalidCertificates: true,
-      serverSelectionTimeoutMS: 5000,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
-  }
+  if (mongoose.connections[0].readyState) return mongoose.connections[0];
 
   try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
+    const conn = await mongoose.connect(MONGODB_URI, {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 5000,
+      tls: true,
+      tlsAllowInvalidCertificates: true,
+    });
+    console.log('✅ MongoDB connected');
+    return conn;
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err);
+    throw new Error('Cannot connect to MongoDB');
   }
-
-  return cached.conn;
 }
