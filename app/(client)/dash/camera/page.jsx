@@ -12,7 +12,7 @@ export default function Camera() {
     return (
         <section className="w-full px-2">
             {/* camera container */}
-            <div className="h-[80dvh] bg-[var(--background-darker)] rounded-4xl p-4">
+            <div className="h-[80dvh] bg-[var(--background-darker)] rounded-4xl p-4 shadow-sm">
             </div>
         </section>
     )

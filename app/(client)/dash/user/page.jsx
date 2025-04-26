@@ -8,7 +8,7 @@ export default function Profile() {
             {/* dropdown menu container */}
             <div className="bg-[var(--background-darker)] rounded-2xl">
                 <HealthDropdown />
-                <AccountDropdown />
+                {/* <AccountDropdown /> hujzin vecit nebus laika */}
                 <div className="flex flex-col w-full p-4 border-top">
                     <button className="flex flex-row justify-between items-center cursor-pointer py-4">
                         <p className="paragraph">Log out</p>

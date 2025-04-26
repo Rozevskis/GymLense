@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
       <body
         className="antialiased max-w-lg bg-[var(--background)] flex justify-center items-center w-full min-h-[100dvh] relative"
       >
-        <DashHeader />
+        <DashHeader activePage={activePage}/>
         <PageLoader>
         {children}
         </PageLoader>

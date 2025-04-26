@@ -7,7 +7,7 @@
   --background: #FFF8F8;
   --foreground: #000000;
   --accent: #0118D8;
-  --background-darker: #E6DFDF;
+  --background-darker: #f7f7f7;
   font-family: 'Bricolage Grotesque', sans-serif;
 }
 
@@ -43,6 +43,7 @@
   /* misc */
   .blur-div {
     background-color: rgba(1,1,1,0.1);
+    backdrop-filter: blur(15px);
   }
   .dialog-footer {
     border-top: 2px solid rgba(0,0,0,0.25);
@@ -54,8 +55,9 @@
     border: 2px solid rgba(0,0,0,0.25);
     transition: 0.2s ease-in-out;
   }
-  .dialog-input:active {
+  .dialog-input:focus {
     border: 2px solid var(--accent);
+    outline:none;
     transition: 0.2s ease-in-out;
   }
   .border-top {
@@ -69,6 +71,11 @@
     transform-origin: 100% 100%;
     display: inline-block;
     animation: loaderRotate 1s linear infinite;
+  }
+  .age-input {
+    @apply rounded-xl px-2 py-2;
+    outline: none;
+    border: 2px solid rgba(0,0,0,0.25);
   }
 }
 
