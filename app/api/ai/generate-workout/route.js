@@ -87,10 +87,19 @@ export async function POST(req) {
   //END Sample response
   try {
     const { user_profile } = await req.json();
+    const formData = await req.formData();
+    const imageFile = formData.get('image');
+    const userProfile = JSON.parse(formData.get('user_profile'));
 
-    // Get optimized image with details for logging
-    const imagePath = path.join(process.cwd(), 'public', 'sampleimage', 'benchpress.jpg');
-    const imageResult = await optimizeImage(imagePath, true);
+    if (!imageFile) {
+      return NextResponse.json({ error: 'No image provided' }, { status: 400 });
+    }
+
+    // Convert image to buffer
+    const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+    
+    // Optimize image
+    const imageResult = await optimizeImage(imageBuffer, true);
     
     // Log optimization details
     console.log('Image optimization results:', {

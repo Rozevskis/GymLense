@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const DEFAULT_USER_PROFILE = {
@@ -11,24 +11,80 @@ const DEFAULT_USER_PROFILE = {
 };
 
 export default function AIWorkout() {
+  useEffect(() => {
+    return () => {
+      // Cleanup: make sure to stop the camera when component unmounts
+      stopCamera();
+    };
+  }, []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
   const [userProfile] = useState(DEFAULT_USER_PROFILE);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setShowCamera(true);
+      }
+    } catch (err) {
+      setError('Failed to access camera: ' + err.message);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current?.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+      setShowCamera(false);
+    }
+  };
+
+  const captureImage = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      
+      const imageData = canvas.toDataURL('image/jpeg');
+      setCapturedImage(imageData);
+      stopCamera();
+    }
+  };
 
   const generateWorkout = async (e) => {
     e.preventDefault();
+    if (!capturedImage) {
+      setError('Please take a picture first');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setResult(null);
 
     try {
+      // Convert base64 to blob
+      const base64Response = await fetch(capturedImage);
+      const blob = await base64Response.blob();
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('image', blob, 'equipment.jpg');
+      formData.append('user_profile', JSON.stringify(userProfile));
+
       const response = await fetch('/api/ai/generate-workout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_profile: userProfile }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -49,6 +105,19 @@ export default function AIWorkout() {
 
     return (
       <div className="space-y-6 text-gray-800">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-gray-900 mb-3">Equipment Image</h3>
+          {capturedImage && (
+            <div className="relative w-full h-[300px] mb-4">
+              <Image
+                src={capturedImage}
+                alt="Captured equipment"
+                fill
+                className="object-contain rounded-lg"
+              />
+            </div>
+          )}
+        </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">{result.name_of_equipment}</h2>
           <p className="mt-2 text-gray-600">{result.description}</p>
@@ -120,9 +189,98 @@ export default function AIWorkout() {
 
   return (
     <div className="container mx-auto p-4 bg-slate-100">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold mb-4 text-gray-900">AI Workout Generator</h1>
-        
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Camera UI */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Take a Picture of Equipment</h2>
+          
+          {showCamera ? (
+            <div className="space-y-4">
+              <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+              <button
+                onClick={captureImage}
+                className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Take Picture
+              </button>
+              <button
+                onClick={stopCamera}
+                className="w-full py-2 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {capturedImage ? (
+                <div>
+                  <div className="relative w-full h-[400px] bg-gray-100 rounded-lg overflow-hidden">
+                    <Image
+                      src={capturedImage}
+                      alt="Captured equipment"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCapturedImage(null);
+                      startCamera();
+                    }}
+                    className="mt-4 w-full py-2 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    Retake Picture
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={startCamera}
+                  className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Open Camera
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Hidden canvas for image processing */}
+        <canvas ref={canvasRef} className="hidden" />
+
+        {/* Error display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {/* Generate button */}
+        <button
+          onClick={generateWorkout}
+          disabled={loading || !capturedImage}
+          className={`w-full py-3 px-4 rounded-lg text-white transition-colors ${
+            loading || !capturedImage
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-green-600 hover:bg-green-700'
+          }`}
+        >
+          {loading ? 'Generating...' : 'Generate Workout Plan'}
+        </button>
+
+        {loading && (
+          <div className="text-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-2 text-gray-600">Generating your workout plan...</p>
+          </div>
+        )}
+
         <div className="border rounded-lg p-4 bg-gray-50">
           <h2 className="text-xl font-semibold mb-2 text-gray-900">User Profile</h2>
           <div className="grid grid-cols-2 gap-2 text-gray-700">

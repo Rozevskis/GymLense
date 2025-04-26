@@ -1,11 +1,12 @@
 import sharp from 'sharp';
 
-export async function optimizeImage(imagePath, returnDetails = false) {
+export async function optimizeImage(imageInput, returnDetails = false) {
   try {
     // First get image metadata and stats
-    const metadata = await sharp(imagePath).metadata();
-    const stats = await sharp(imagePath).stats();
-    const originalBuffer = await sharp(imagePath).toBuffer();
+    const originalImage = sharp(Buffer.isBuffer(imageInput) ? imageInput : imageInput);
+    const metadata = await originalImage.metadata();
+    const stats = await originalImage.stats();
+    const originalBuffer = await originalImage.toBuffer();
     
     // Calculate target dimensions while maintaining aspect ratio
     const MAX_WIDTH = 192;
