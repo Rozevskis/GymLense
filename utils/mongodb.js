@@ -20,11 +20,12 @@ export async function connectToDatabase() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      ssl: true, // ✅ Force SSL
+      sslValidate: true, // ✅ Validate SSL certificates
+      serverSelectionTimeoutMS: 5000, // ✅ optional - faster error timeout
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
   }
 
   try {
