@@ -16,16 +16,14 @@ export default function RootLayout({ children }) {
   }, [pathname]);
 
   return (
-    <html lang="en" className="bg-zinc-900 w-full flex justify-center items-center">
-      <body
-        className="antialiased max-w-lg bg-[var(--background)] flex justify-center items-center w-full min-h-[100dvh] relative"
-      >
-        <DashHeader activePage={activePage}/>
+    <div className="flex flex-col w-full h-full">
+      <DashHeader activePage={activePage}/>
+      <main className="flex-1 w-full">
         <PageLoader>
-        {children}
+          {children}
         </PageLoader>
-        <DashFooter activePage={activePage} />
-      </body>
-    </html>
+      </main>
+      <DashFooter activePage={activePage} />
+    </div>
   );
 }

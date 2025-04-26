@@ -1,14 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SignIn() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [returnUrl, setReturnUrl] = useState('/dash/user');
+    
+    // Get returnUrl from URL parameters
+    useEffect(() => {
+        const urlReturnPath = searchParams.get('returnUrl');
+        if (urlReturnPath) {
+            setReturnUrl(urlReturnPath);
+        }
+    }, [searchParams]);
     
     // Form states
     const [loginData, setLoginData] = useState({
@@ -53,8 +63,8 @@ export default function SignIn() {
                 throw new Error(data.error || 'Login failed');
             }
             
-            // Redirect to home page on successful login
-            router.push('/');
+            // Redirect to return URL or dashboard on successful login
+            router.push(returnUrl);
         } catch (error) {
             setError(error.message);
         } finally {
@@ -126,8 +136,8 @@ export default function SignIn() {
                 throw new Error(updateResult.error || 'Profile update failed');
             }
             
-            // Redirect to home page on successful registration and profile update
-            router.push('/');
+            // Redirect to return URL or dashboard on successful registration and profile update
+            router.push(returnUrl);
         } catch (error) {
             setError(error.message);
         } finally {
