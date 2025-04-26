@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from '@/lib/mongodb';
-import { connectToDatabase } from '@/lib/mongoose';
+import connectDB from '@/lib/mongoose';
 
 const handler = NextAuth({
   providers: [
@@ -14,14 +14,8 @@ const handler = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   callbacks: {
     async signIn({ user, account, profile }) {
-      try {
-        await connectToDatabase(); // Ensure DB connection before sign in
-        if (account.provider === "google") {
-          return profile.email_verified;
-        }
-        return true;
-      } catch (error) {
-        console.error('SignIn DB Error:', error);
+      await connectDB();
+      return true;
         return false;
       }
     },
