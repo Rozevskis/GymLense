@@ -1,5 +1,4 @@
-require('dotenv').config();
-const { MongoClient } = require('mongodb');
+// syncUserModel script removed. No longer using MongoDB.
 
 const uri = process.env.MONGODB_URI;
 if (!uri) {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import clientPromise from '@/lib/mongodb';
+// MongoDB logic removed. Ready for new implementation.
 
 export async function POST(req) {
   try {
@@ -13,33 +13,8 @@ export async function POST(req) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("gymlense");
-    
-    // Check if user already exists
-    const existingUser = await db.collection("users").findOne({ email });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'User already exists' },
-        { status: 400 }
-      );
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user
-    const result = await db.collection("users").insertOne({
-      name,
-      email,
-      password: hashedPassword,
-      createdAt: new Date(),
-    });
-
-    return NextResponse.json(
-      { message: 'User created successfully' },
-      { status: 201 }
-    );
+    // Database logic removed. Add your own implementation here.
+    return NextResponse.json({ success: true, message: 'User registration placeholder.' });
   } catch (error) {
     return NextResponse.json(
       { error: 'Error creating user' },

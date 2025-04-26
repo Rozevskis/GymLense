@@ -1,34 +1,10 @@
 import { NextResponse } from 'next/server';
-import User from '@/models/User';
-import connectDB from '@/lib/mongoose';
 
 export async function PUT(req) {
   try {
-    await connectDB();
-    const data = await req.json();
-    const { email, name, weight, height, age, fitnessLevel, sex } = data;
-
-    if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
-    }
-
-    // Find user by email and update, or create if doesn't exist
-    const user = await User.findOneAndUpdate(
-      { email },
-      {
-        name,
-        weight,
-        height,
-        age,
-        fitnessLevel,
-        sex,
-      },
-      { new: true, upsert: true }
-    );
-
-    return NextResponse.json(user);
+    return NextResponse.json({ success: true, message: 'User update placeholder.' });
   } catch (error) {
-    console.error('Failed to update user:', error);
+    console.error('Error:', error);
     return NextResponse.json(
       { error: 'Failed to update user profile' },
       { status: 500 }

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+// User model removed. No longer using mongoose.
 
 const userSchema = new mongoose.Schema({
   // NextAuth required fields
