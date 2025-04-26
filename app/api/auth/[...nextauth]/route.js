@@ -1,47 +1,36 @@
 import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
+import GoogleProvider from 'next-auth/providers/google';
+import AppleProvider from 'next-auth/providers/apple';
+import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from '@/lib/mongodb';
 
 const handler = NextAuth({
   providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Please enter an email and password');
-        }
-
-        const client = await clientPromise;
-        const usersCollection = client.db("gymlense").collection("users");
-        
-        const user = await usersCollection.findOne({ email: credentials.email });
-        if (!user) {
-          throw new Error('No user found with this email');
-        }
-
-        const passwordMatch = await bcrypt.compare(credentials.password, user.password);
-        if (!passwordMatch) {
-          throw new Error('Incorrect password');
-        }
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-        };
-      }
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    AppleProvider({
+      clientId: process.env.APPLE_ID,
+      clientSecret: process.env.APPLE_SECRET,
     })
   ],
-  session: {
-    strategy: "jwt"
+  adapter: MongoDBAdapter(clientPromise),
+  callbacks: {
+    async session({ session, user }) {
+      // Add user data to session
+      session.user.id = user.id;
+      return session;
+    },
+    async signIn({ account, profile }) {
+      if (account.provider === "google") {
+        return profile.email_verified;
+      }
+      return true;
+    },
   },
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/signin',
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
