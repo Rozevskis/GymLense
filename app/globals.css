@@ -11,6 +11,7 @@
   --background: #FFF8F8;
   --foreground: #000000;
   --accent: #0118D8;
+  --background-darker: #E6DFDF;
 }
 
 @layer utilities {
@@ -23,9 +24,12 @@
   }
 
   .subheading {
-    @apply text-[24px];
+    @apply text-[37px];
   }
   .paragraph {
+    @apply text-[23px];
+  }
+  .subtext {
     @apply text-[19px];
   }
 
@@ -33,6 +37,30 @@
   .sign-in-button {
     @apply text-[19px] rounded-4xl py-2 my-5 w-full cursor-pointer;
     border: 2px solid black;
+  }
+  .dropdown-item {
+    border-top: 1px solid rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+
+  /* misc */
+  .blur-div {
+    background-color: rgba(1,1,1,0.1);
+    backdrop-filter: blur(100px);
+  }
+  .dialog-footer {
+    border-top: 2px solid rgba(0,0,0,0.25);
+  }
+  .dialog-close {
+    border-right: 2px solid rgba(0,0,0,0.25);
+  }
+  .dialog-input {
+    border: 2px solid rgba(0,0,0,0.25);
+    transition: 0.2s ease-in-out;
+  }
+  .dialog-input:active {
+    border: 2px solid var(--accent);
+    transition: 0.2s ease-in-out;
   }
 }
 
