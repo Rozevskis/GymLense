@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from '@/lib/mongodb';
+import { getServerSession } from 'next-auth';
 
 const handler = NextAuth({
   providers: [
@@ -13,12 +14,35 @@ const handler = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   callbacks: {
     async signIn({ user, account, profile }) {
-      return true;
+      try {
+        // You can add custom logic here if needed
+        return true;
+      } catch (error) {
+        console.error('Sign in error:', error);
+        return false;
+      }
     },
     async session({ session, user }) {
-      // Add user ID to the session
-      session.user.id = user.id;
-      return session;
+      try {
+        // Add user ID to the session
+        if (user) {
+          session.user.id = user.id;
+        }
+        return session;
+      } catch (error) {
+        console.error('Session error:', error);
+        return session;
+      }
+    },
+    async jwt({ token, user, account }) {
+      // Initial sign in
+      if (account && user) {
+        return {
+          ...token,
+          userId: user.id,
+        };
+      }
+      return token;
     },
   },
   pages: {
