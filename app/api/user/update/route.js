@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import User from '@/models/User';
-import { connectToDatabase } from '@/lib/mongoose';
+import connectDB from '@/lib/mongoose';
 
 export async function PUT(req) {
   try {
-    await connectToDatabase();
+    await connectDB();
     const data = await req.json();
     const { email, name, weight, height, age, fitnessLevel, sex } = data;
 
@@ -38,7 +38,7 @@ export async function PUT(req) {
 
 export async function GET(req) {
   try {
-    await connectToDatabase();
+    await connectDB();
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');
 
