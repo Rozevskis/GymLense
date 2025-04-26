@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import AppleProvider from 'next-auth/providers/apple';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from '@/lib/mongodb';
+import { connectToDatabase } from '@/utils/mongodb';
 
 const handler = NextAuth({
   providers: [
@@ -10,27 +10,18 @@ const handler = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    AppleProvider({
-      clientId: process.env.APPLE_ID,
-      clientSecret: process.env.APPLE_SECRET,
-    })
   ],
   adapter: MongoDBAdapter(clientPromise),
   callbacks: {
-    async session({ session, user }) {
-      if (session?.user) {
-        session.user.id = user.id;
-      }
-      return session;
-    },
-    async signIn({ account, profile }) {
+    async signIn({ user, account, profile }) {
       try {
+        await connectToDatabase(); // Ensure DB connection before sign in
         if (account.provider === "google") {
           return profile.email_verified;
         }
         return true;
       } catch (error) {
-        console.error("SignIn error:", error);
+        console.error('SignIn DB Error:', error);
         return false;
       }
     },
