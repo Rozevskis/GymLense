@@ -18,15 +18,26 @@ async function connectToDatabase() {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+    const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 5000,
+      ssl: true,
       tls: true,
-      tlsAllowInvalidCertificates: true, // 🛠 Critical for Vercel deployment
-    }).then((mongoose) => {
-      console.log('✅ MongoDB connected');
-      return mongoose;
-    });
+      tlsInsecure: true,                  // Most permissive
+      tlsAllowInvalidCertificates: true,  // Most permissive
+      directConnection: true,             // Try direct connection
+      serverSelectionTimeoutMS: 30000,    // Longer timeout
+      socketTimeoutMS: 45000,             // Longer socket timeout
+      autoIndex: false,                   // Don't build indexes
+      maxPoolSize: 10,
+      minPoolSize: 5,
+      retryWrites: true
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts)
+      .then((mongoose) => {
+        console.log('✅ MongoDB connected with permissive SSL');
+        return mongoose;
+      });
   }
 
   try {
@@ -38,3 +49,5 @@ async function connectToDatabase() {
     throw err;
   }
 }
+
+export { connectToDatabase };
