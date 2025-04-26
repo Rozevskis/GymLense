@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import User from '@/models/User';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectToDatabase } from '@/lib/mongoose';
 
 export async function PUT(req) {
   try {
