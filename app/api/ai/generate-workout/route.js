@@ -3,9 +3,19 @@ import OpenAI from 'openai';
 import path from 'path';
 import { optimizeImage } from '@/utils/imageUtils';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI only if API key is present
+let openai;
+try {
+  if (!process.env.OPENAI_API_KEY) {
+    console.warn('OpenAI API key is not configured');
+  } else {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+  }
+} catch (error) {
+  console.error('Failed to initialize OpenAI:', error);
+}
 
 // Demo endpoint to test image optimization
 // export async function GET(req) {
@@ -18,8 +28,11 @@ const openai = new OpenAI({
 //       details: imageDetails
 //     });
 //   } catch (error) {
-//     console.error('Demo endpoint error:', error);
-//     return NextResponse.json({ error: error.message }, { status: 500 });
+//     const errorMessage = error.message || 'An unexpected error occurred';
+//     return NextResponse.json({ 
+//       error: errorMessage,
+//       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+//     }, { status: 500 });
 //   }
 // }
 
@@ -87,51 +100,26 @@ export async function POST(req) {
       compressionRatio: imageResult.compressionRatio + 'x'
     });
 
+    // Check if OpenAI is initialized
+    if (!openai) {
+      return NextResponse.json({
+        error: "OpenAI API key is not configured. Please add your API key to the environment variables."
+      }, { status: 503 });
+    }
+
     const openAIRequest = {
-      model: "gpt-4o",
+      model: "gpt-4-vision-preview",
       messages: [
         {
           role: "system",
-          content: "You are a professional fitness coach AI. When provided with an image of gym equipment and user profile details, analyze the image and generate a detailed JSON response. For the recommended_repetitions, calculate actual weight numbers in kg based on the user's weight and fitness level - do not use percentages or 1RM values. For example, if a user weighs 73kg, suggest actual weights like '40kg' or '50kg'. Strictly output only the JSON object without additional commentary. Follow the exact structure specified."
+          content: `You are a professional personal trainer. Analyze the image of gym equipment and create a workout plan. The user's profile is: ${JSON.stringify(user_profile)}. Include specific weight numbers based on the user's weight, not percentages or 1RM values.`
         },
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: `Analyze the provided gym equipment image and the following user profile:
-
-User Profile:
-- Weight: ${user_profile.weight} kg
-- Height: ${user_profile.height} cm
-- Age: ${user_profile.age} years
-- Fitness Level: ${user_profile.fitness_level}
-- Sex: ${user_profile.sex}
-
-Return a JSON response structured exactly like this:
-
-{
-  "name_of_equipment": "string",
-  "description": "string",
-  "targeted_muscles": {
-    "primary": ["string"],
-    "secondary": ["string"]
-  },
-  "recommended_repetitions": [
-    {
-      "set": number,
-      "weight": "string",
-      "repetitions": number,
-      "rest_time": "string",
-      "type": "string"
-    }
-  ],
-  "form_tips": ["string"],
-  "safety_considerations": ["string"],
-  "recommended_warmup": "string"
-}
-
-Strictly respect JSON formatting and field names.`
+              text: "What exercise can I do with this equipment? Please provide a detailed workout plan."
             },
             {
               type: "image_url",
@@ -142,23 +130,33 @@ Strictly respect JSON formatting and field names.`
           ]
         }
       ],
-      max_tokens: 1500
+      max_tokens: 500
     };
 
-    const completion = await openai.chat.completions.create(openAIRequest);
-
     try {
-      // Get the response content and clean it up
-      const responseContent = completion.choices[0].message.content;
-      const cleanedContent = responseContent.replace(/```json\n|```/g, '').trim();
-      const jsonResponse = JSON.parse(cleanedContent);
-      return NextResponse.json(jsonResponse);
-    } catch (parseError) {
-      console.error('Failed to parse AI response:', completion.choices[0].message.content);
-      return NextResponse.json(
-        { error: 'Invalid response format from AI' },
-        { status: 500 }
-      );
+      const response = await openai.chat.completions.create(openAIRequest);
+
+      try {
+        // Get the response content and clean it up
+        const responseContent = response.choices[0].message.content;
+        const cleanedContent = responseContent.replace(/```json\n|```/g, '').trim();
+        const jsonResponse = JSON.parse(cleanedContent);
+        return NextResponse.json(jsonResponse);
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', response.choices[0].message.content);
+        return NextResponse.json(
+          { error: 'Invalid response format from AI' },
+          { status: 500 }
+        );
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      const errorMessage = error.message || 'An unexpected error occurred';
+      return NextResponse.json({ 
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      }, { status: 500 });
     }
 
   } catch (error) {
@@ -169,3 +167,5 @@ Strictly respect JSON formatting and field names.`
     );
   }
 }
+
+
