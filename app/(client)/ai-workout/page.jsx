@@ -44,14 +44,88 @@ export default function AIWorkout() {
     }
   };
 
+  const renderWorkoutPlan = () => {
+    if (!result) return null;
+
+    return (
+      <div className="space-y-6 text-gray-800">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">{result.name_of_equipment}</h2>
+          <p className="mt-2 text-gray-600">{result.description}</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Primary Muscles</h3>
+            <ul className="list-disc list-inside text-gray-600">
+              {result.targeted_muscles.primary.map((muscle, i) => (
+                <li key={i}>{muscle}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-900">Secondary Muscles</h3>
+            <ul className="list-disc list-inside text-gray-600">
+              {result.targeted_muscles.secondary.map((muscle, i) => (
+                <li key={i}>{muscle}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-3">Workout Sets</h3>
+          <div className="grid gap-3">
+            {result.recommended_repetitions.map((set, i) => (
+              <div key={i} className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-2">
+                  <div><span className="font-medium">Set:</span> {set.set}</div>
+                  <div><span className="font-medium">Type:</span> {set.type}</div>
+                  <div><span className="font-medium">Weight:</span> {set.weight}</div>
+                  <div><span className="font-medium">Reps:</span> {set.repetitions}</div>
+                  <div className="col-span-2"><span className="font-medium">Rest:</span> {set.rest_time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-2">Form Tips</h3>
+            <ul className="list-disc list-inside text-gray-600 space-y-1">
+              {result.form_tips.map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-2">Safety Considerations</h3>
+            <ul className="list-disc list-inside text-gray-600 space-y-1">
+              {result.safety_considerations.map((safety, i) => (
+                <li key={i}>{safety}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-2">Recommended Warm-up</h3>
+            <p className="text-gray-600">{result.recommended_warmup}</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 bg-slate-100">
       <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold mb-4">AI Workout Generator</h1>
+        <h1 className="text-2xl font-bold mb-4 text-gray-900">AI Workout Generator</h1>
         
         <div className="border rounded-lg p-4 bg-gray-50">
-          <h2 className="text-xl font-semibold mb-2">User Profile</h2>
-          <div className="grid grid-cols-2 gap-2">
+          <h2 className="text-xl font-semibold mb-2 text-gray-900">User Profile</h2>
+          <div className="grid grid-cols-2 gap-2 text-gray-700">
             <div>Weight: {userProfile.weight} kg</div>
             <div>Height: {userProfile.height} cm</div>
             <div>Age: {userProfile.age} years</div>
@@ -61,7 +135,7 @@ export default function AIWorkout() {
         </div>
 
         <div className="border rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-2">Equipment Image</h2>
+          <h2 className="text-xl font-semibold mb-2 text-gray-900">Equipment Image</h2>
           <div className="relative w-full h-[300px]">
             <Image
               src="/sampleimage/benchpress.jpg"
@@ -81,17 +155,15 @@ export default function AIWorkout() {
         </button>
 
         {error && (
-          <div className="text-red-600 p-4 border border-red-200 rounded-lg">
+          <div className="text-red-600 p-4 border border-red-200 rounded-lg bg-red-50">
             {error}
           </div>
         )}
 
         {result && (
           <div className="border rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-2">Workout Plan</h2>
-            <pre className="whitespace-pre-wrap bg-gray-50 p-4 rounded">
-              {JSON.stringify(result, null, 2)}
-            </pre>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">Workout Plan</h2>
+            {renderWorkoutPlan()}
           </div>
         )}
       </div>

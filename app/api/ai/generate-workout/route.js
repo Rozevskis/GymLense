@@ -8,6 +8,54 @@ const openai = new OpenAI({
 });
 
 export async function POST(req) {
+  // Sample response
+  return NextResponse.json({
+    "name_of_equipment": "Barbell Bench Press",
+    "description": "A common gym exercise used to build strength in the upper body.",
+    "targeted_muscles": {
+      "primary": [
+        "Chest"
+      ],
+      "secondary": [
+        "Triceps",
+        "Shoulders"
+      ]
+    },
+    "recommended_repetitions": [
+      {
+        "set": 1,
+        "weight": "40kg",
+        "repetitions": 10,
+        "rest_time": "60-90 seconds",
+        "type": "Warm-up"
+      },
+      {
+        "set": 2,
+        "weight": "50kg",
+        "repetitions": 8,
+        "rest_time": "60-90 seconds",
+        "type": "Working"
+      },
+      {
+        "set": 3,
+        "weight": "55kg",
+        "repetitions": 6,
+        "rest_time": "60-90 seconds",
+        "type": "Working"
+      }
+    ],
+    "form_tips": [
+      "Keep your feet flat on the ground.",
+      "Arch your back slightly while keeping your glutes on the bench.",
+      "Lower the barbell slowly to your chest."
+    ],
+    "safety_considerations": [
+      "Ensure a spotter is present for heavy sets.",
+      "Do not bounce the bar off your chest."
+    ],
+    "recommended_warmup": "5-10 minutes of light cardio and dynamic stretches for the upper body."
+  });
+  //END Sample response
   try {
     const { user_profile } = await req.json();
 
@@ -41,7 +89,6 @@ Return a JSON response structured exactly like this:
 {
   "name_of_equipment": "string",
   "description": "string",
-  "difficulty_level": "string",
   "targeted_muscles": {
     "primary": ["string"],
     "secondary": ["string"]
