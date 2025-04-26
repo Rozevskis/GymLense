@@ -40,8 +40,8 @@ const userSchema = new mongoose.Schema({
   },
   fitnessLevel: {
     type: String,
-    enum: ['beginner', 'intermediate', 'advanced'],
-    default: 'beginner',
+    enum: ['unfit', 'average', 'fit'],
+    default: 'average',
   },
   sex: {
     type: String,
