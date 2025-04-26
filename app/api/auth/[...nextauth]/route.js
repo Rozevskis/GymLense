@@ -16,8 +16,6 @@ const handler = NextAuth({
     async signIn({ user, account, profile }) {
       await connectDB();
       return true;
-        return false;
-      }
     },
   },
   pages: {
