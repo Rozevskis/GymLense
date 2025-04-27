@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from "next/image";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function SignIn() {
+function SignInClient() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isLogin, setIsLogin] = useState(true);
@@ -362,4 +363,12 @@ export default function SignIn() {
             </div>
         </section>
     );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInClient />
+    </Suspense>
+  );
 }
