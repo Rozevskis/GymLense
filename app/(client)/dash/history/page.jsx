@@ -32,6 +32,7 @@ export default function History() {
     return (
       <section className="flex flex-col items-center justify-start w-full bg-white px-4 py-6">
         <button onClick={() => setSelected(null)} className="mb-4 text-blue-600">Back</button>
+        <img src={`data:image/jpeg;base64,${selected.image}`} alt="Workout image" className="w-full h-auto object-cover rounded-md mb-4" />
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -93,9 +94,16 @@ export default function History() {
           <div
             key={item._id}
             onClick={() => setSelected(item)}
-            className="cursor-pointer bg-[var(--background)] p-4 rounded-lg shadow flex flex-row items-center justify-between space-x-4"
+            className="cursor-pointer bg-[var(--background)] p-4 rounded-lg shadow flex justify-between items-center"
           >
-            <p className="text-lg subheading">{item.response.name_of_equipment}</p>
+            <div className="flex items-center space-x-4">
+              <img
+                src={`data:image/jpeg;base64,${item.image}`}
+                alt={item.response.name_of_equipment}
+                className="w-12 h-12 object-cover rounded-md"
+              />
+              <p className="text-lg subheading">{item.response.name_of_equipment}</p>
+            </div>
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>

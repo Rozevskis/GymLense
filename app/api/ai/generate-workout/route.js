@@ -221,7 +221,7 @@ export async function POST(req) {
             const { payload } = await jwtVerify(token, secret);
             userId = payload.id;
           }
-          await WorkoutResponse.create({ userId, response: jsonResponse });
+          await WorkoutResponse.create({ userId, response: jsonResponse, image: imageResult.base64Data });
         } catch (dbError) {
           console.error('Failed to save workout response:', dbError);
         }
