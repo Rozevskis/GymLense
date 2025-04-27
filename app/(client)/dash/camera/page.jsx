@@ -127,7 +127,7 @@ export default function AIWorkout() {
                 width: { ideal: 1280 },
                 height: { ideal: 720 },
             }}
-            mirrored
+            mirrored={false}
             playsInline
             style={{
                 width: '100%',
