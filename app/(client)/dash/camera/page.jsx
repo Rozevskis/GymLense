@@ -81,7 +81,7 @@ export default function AIWorkout() {
       }
 
       const data = await response.json();
-      // For smome stupid reason this doesnt work here but works in history page
+      // For some stupid reason this doesn't work here but works in history page
       // router.push(`/dash/history/${data.id}`);
       // Force navigation with window.location instead of router.push
       if (data.id) {
@@ -123,7 +123,7 @@ export default function AIWorkout() {
             audio={false}
             screenshotFormat="image/jpeg"
             videoConstraints={{
-                facingMode: { ideal: 'user' },
+                facingMode: { ideal: 'environment' },
                 width: { ideal: 1280 },
                 height: { ideal: 720 },
             }}
