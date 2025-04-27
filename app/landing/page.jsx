@@ -170,9 +170,21 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-            <div className="bg-black/50 border border-[#a3e635]/10 p-8 backdrop-blur-lg rounded-lg">
-              <div className="aspect-video rounded-lg bg-gradient-to-br from-[#a3e635]/20 via-[#84cc16]/20 to-[#65a30d]/20 flex items-center justify-center">
-                <span className="text-white/50">Demo Video Placeholder</span>
+            <div className="bg-black/50 border border-[#a3e635]/10 backdrop-blur-lg rounded-lg">
+              <div className="aspect-[9/16] rounded-lg overflow-hidden relative">
+                <video 
+                  className="w-full h-full object-cover rounded-lg" 
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls={false}
+                  poster="/lift-unscreen.gif"
+                >
+                  <source src="/demo_video.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
               </div>
             </div>
           </div>
