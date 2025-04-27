@@ -20,8 +20,8 @@ export default function DashHeader({
       transition={{ ease: [0, 1, 0.77, 0.98], duration: 0.7 }}
       className="w-full max-w-lg fixed top-0 z-[500]"
     >
-      <nav className="bg-[var(--accent)] h-[72px] flex justify-center items-center px-4 text-[var(--background)] rounded-b-2xl">
-        <h2 className="subheading">{activePageFormatted}</h2>
+      <nav className="h-[36px] bg-[var(--background)] flex justify-center items-center px-4 pt-4 pb-4 text-[var(--accent-darker)] rounded-b-2xl">
+        <h2 className="subheading text-[var(--foreground)]">Gym<span className="text-[var(--accent)]">Lens</span></h2>
       </nav>
     </motion.header>
   )

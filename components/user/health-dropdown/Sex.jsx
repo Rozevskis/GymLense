@@ -52,12 +52,12 @@ export default function SexPicker({ sex, onSexChange, onSave }) {
     return (
         <>
             <button 
-                className="flex flex-row justify-between items-center cursor-pointer py-4 border-bottom" 
+                className="flex flex-row justify-between items-center cursor-pointer py-4 border-bottom text-[var(--foreground-darker)]" 
                 onClick={handleOpen}
             >
-                <p className="subtext">Sex</p>
+                <p className="paragraph">Sex</p>
                 <div className="flex justify-center items-center flex-row">
-                    <p className="subtext pt-[1px]">{numToLevel(selected)}</p>
+                    <p className="paragraph pt-[1px]">{numToLevel(selected)}</p>
                     <Image src="/chevron.svg" alt="" height={32} width={32} />
                 </div>
             </button>
@@ -78,7 +78,7 @@ export default function SexPicker({ sex, onSexChange, onSave }) {
                         className="bg-[var(--background)] shadow-md rounded-2xl flex flex-col justify-center items-center w-[95%] max-w-md translate-y-[-50%] translate-x-[-50%] top-1/2 left-1/2 absolute m-0 p-0"
                     >
                         <div className="h-[72px] flex justify-center items-center rounded-t-2xl bg-[var(--accent)] w-full text-[var(--background)]">
-                            <h1 className="subheading">Enter Sex</h1>
+                            <h1 className="subheading text-[var(--accent-darker)]">Enter Sex</h1>
                         </div>
 
                         <div className="bg-[var(--background)] py-20">
@@ -94,19 +94,19 @@ export default function SexPicker({ sex, onSexChange, onSave }) {
                                     onClick={() => handleChangeLevel(1)}
                                     className="paragraph z-10 w-[60px] text-center cursor-pointer"
                                 >
-                                    <motion.p style={{ color: selected === 1 ? "white" : "black" }}>Male</motion.p>
+                                    <motion.p style={{ color: selected === 1 ? "black" : "white" }}>Male</motion.p>
                                 </motion.button>
                                 <motion.button
                                     onClick={() => handleChangeLevel(2)}
                                     className="paragraph z-10 w-[60px] text-center cursor-pointer"
                                 >
-                                    <motion.p style={{ color: selected === 2 ? "white" : "black" }}>Female</motion.p>
+                                    <motion.p style={{ color: selected === 2 ? "black" : "white" }}>Female</motion.p>
                                 </motion.button>
                                 <motion.button
                                     onClick={() => handleChangeLevel(3)}
                                     className="paragraph z-10 w-[60px] text-center cursor-pointer"
                                 >
-                                    <motion.p style={{ color: selected === 3 ? "white" : "black" }}>Other</motion.p>
+                                    <motion.p style={{ color: selected === 3 ? "black" : "white" }}>Other</motion.p>
                                 </motion.button>
                             </div>
                         </div>
@@ -114,13 +114,13 @@ export default function SexPicker({ sex, onSexChange, onSave }) {
                         <div className="flex rounded-b-2xl w-full dialog-footer">
                             <button 
                                 onClick={handleClose} 
-                                className="w-1/2 paragraph font-semibold dialog-close py-5 cursor-pointer"
+                                className="w-1/2 paragraph text-[var(--foreground)] dialog-close py-5 cursor-pointer"
                             >
                                 Close
                             </button>
                             <button 
                                 onClick={handleSave} 
-                                className="w-1/2 paragraph text-[var(--accent)] font-semibold py-5 cursor-pointer"
+                                className="w-1/2 paragraph text-[var(--accent)] py-5 cursor-pointer"
                             >
                                 Save
                             </button>

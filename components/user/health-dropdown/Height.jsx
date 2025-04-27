@@ -37,12 +37,12 @@ export default function HeightPicker({ height, onHeightChange, onSave }) {
     return (
         <>
             <button 
-                className="flex flex-row justify-between items-center cursor-pointer border-bottom py-4" 
+                className="flex flex-row justify-between items-center cursor-pointer border-bottom py-4 text-[var(--foreground-darker)]" 
                 onClick={handleOpen}
             >
-                <p className="subtext">Height</p>
+                <p className="paragraph">Height</p>
                 <div className="flex justify-center items-center flex-row">
-                    <p className="subtext pt-[1px]">{selectedHeight} cm</p>
+                    <p className="paragraph pt-[1px]">{selectedHeight} cm</p>
                     <Image src="/chevron.svg" alt="" height={32} width={32} />
                 </div>
             </button>
@@ -63,7 +63,7 @@ export default function HeightPicker({ height, onHeightChange, onSave }) {
                         className="bg-[var(--background)] shadow-md rounded-2xl flex flex-col justify-center items-center w-[95%] max-w-md translate-y-[-50%] translate-x-[-50%] top-1/2 left-1/2 absolute m-0 p-0"
                     >
                         <div className="h-[72px] flex justify-center items-center rounded-t-2xl bg-[var(--accent)] w-full text-[var(--background)]">
-                            <h1 className="subheading">Enter Height</h1>
+                            <h1 className="subheading text-[var(--accent-darker)]">Enter Height</h1>
                         </div>
 
                         <div className="bg-[var(--background)] py-20">
@@ -72,23 +72,23 @@ export default function HeightPicker({ height, onHeightChange, onSave }) {
                                     type="number" 
                                     min="0" 
                                     max="300" 
-                                    className="py-2 w-[350px] paragraph age-input dialog-input" 
+                                    className="py-2 w-[350px] paragraph dialog-input age-input text-[var(--foreground)]" 
                                     value={selectedHeight}
                                     onChange={handleHeightChange}
                                 />
                             </div>
                         </div>
 
-                        <div className="flex rounded-b-2xl w-full dialog-footer">
+                        <div className="flex rounded-b-2xl w-full dialog-footer text-[var(--foreground)]">
                             <button 
                                 onClick={handleClose} 
-                                className="w-1/2 paragraph font-semibold dialog-close py-5 cursor-pointer"
+                                className="w-1/2 paragraph dialog-close py-5 cursor-pointer"
                             >
                                 Close
                             </button>
                             <button 
                                 onClick={handleSave} 
-                                className="w-1/2 paragraph text-[var(--accent)] font-semibold py-5 cursor-pointer"
+                                className="w-1/2 paragraph text-[var(--accent)] py-5 cursor-pointer"
                             >
                                 Save
                             </button>

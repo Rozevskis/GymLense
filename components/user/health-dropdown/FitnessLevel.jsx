@@ -51,12 +51,12 @@ export default function FitnessLevel({ fitnessLevel, onFitnessLevelChange, onSav
     return (
         <>
             <button 
-                className="flex flex-row justify-between items-center cursor-pointer py-4" 
+                className="flex flex-row justify-between items-center cursor-pointer py-4 text-[var(--foreground-darker)]" 
                 onClick={handleOpen}
             >
-                <p className="subtext">Fitness Level</p>
+                <p className="paragraph">Fitness Level</p>
                 <div className="flex justify-center items-center flex-row">
-                    <p className="subtext pt-[1px]">{numToLevel(selected)}</p>
+                    <p className="paragraph pt-[1px]">{numToLevel(selected)}</p>
                     <Image src="/chevron.svg" alt="" height={32} width={32} />
                 </div>
             </button>
@@ -77,7 +77,7 @@ export default function FitnessLevel({ fitnessLevel, onFitnessLevelChange, onSav
                         className="bg-[var(--background)] shadow-md rounded-2xl flex flex-col justify-center items-center w-[95%] max-w-md translate-y-[-50%] translate-x-[-50%] top-1/2 left-1/2 absolute m-0 p-0"
                     >
                         <div className="h-[72px] flex justify-center items-center rounded-t-2xl bg-[var(--accent)] w-full text-[var(--background)]">
-                            <h1 className="subheading">Enter Fitness Level</h1>
+                            <h1 className="subheading text-[var(--accent-darker)]">Enter Fitness Level</h1>
                         </div>
 
                         <div className="bg-[var(--background)] py-20">
@@ -93,19 +93,19 @@ export default function FitnessLevel({ fitnessLevel, onFitnessLevelChange, onSav
                                     onClick={() => handleChangeLevel(1)}
                                     className="paragraph z-10 w-[60px] text-center cursor-pointer"
                                 >
-                                    <motion.p style={{ color: selected === 1 ? "white" : "black" }}>Unfit</motion.p>
+                                    <motion.p style={{ color: selected === 1 ? "black" : "white" }}>Unfit</motion.p>
                                 </motion.button>
                                 <motion.button
                                     onClick={() => handleChangeLevel(2)}
                                     className="paragraph z-10 w-[60px] text-center cursor-pointer"
                                 >
-                                    <motion.p style={{ color: selected === 2 ? "white" : "black" }}>Average</motion.p>
+                                    <motion.p style={{ color: selected === 2 ? "black" : "white" }}>Average</motion.p>
                                 </motion.button>
                                 <motion.button
                                     onClick={() => handleChangeLevel(3)}
                                     className="paragraph z-10 w-[60px] text-center cursor-pointer"
                                 >
-                                    <motion.p style={{ color: selected === 3 ? "white" : "black" }}>Fit</motion.p>
+                                    <motion.p style={{ color: selected === 3 ? "black" : "white" }}>Fit</motion.p>
                                 </motion.button>
                             </div>
                         </div>
@@ -113,13 +113,13 @@ export default function FitnessLevel({ fitnessLevel, onFitnessLevelChange, onSav
                         <div className="flex rounded-b-2xl w-full dialog-footer">
                             <button 
                                 onClick={handleClose} 
-                                className="w-1/2 paragraph font-semibold dialog-close py-5 cursor-pointer"
+                                className="w-1/2 paragraph dialog-close text-[var(--foreground)] py-5 cursor-pointer"
                             >
                                 Close
                             </button>
                             <button 
                                 onClick={handleSave} 
-                                className="w-1/2 paragraph text-[var(--accent)] font-semibold py-5 cursor-pointer"
+                                className="w-1/2 paragraph text-[var(--accent)] py-5 cursor-pointer"
                             >
                                 Save
                             </button>

@@ -1,10 +1,6 @@
+"use client"
 import "@/app/globals.css";
 import { Toaster } from "react-hot-toast";
-
-export const metadata = {
-  title: "GymLense - AI Workout Assistant",
-  description: "Your personal AI workout assistant",
-};
 
 export default function SignInLayout({ children }) {
   return (

@@ -2,10 +2,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FFF8F8;
-  --foreground: #000000;
-  --accent: #0118D8;
-  --background-darker: #f7f7f7;
+  --background: #030303;
+  --foreground: #f1f1f1;
+  --accent: #A2C11C;
+  --accent-darker: #3a4507;
+  --background-darker: #131313;
+  --foreground-darker: #9a9a9a;
   font-family: 'Bricolage Grotesque', sans-serif;
 }
 
@@ -50,11 +52,10 @@
     border-right: 2px solid rgba(0,0,0,0.25);
   }
   .dialog-input {
-    border: 2px solid rgba(0,0,0,0.25);
+    border: 2px solid #A2C11C;
     transition: 0.2s ease-in-out;
   }
   .dialog-input:focus {
-    border: 2px solid var(--accent);
     outline:none;
     transition: 0.2s ease-in-out;
   }
@@ -73,7 +74,31 @@
   .age-input {
     @apply rounded-xl px-2 py-2;
     outline: none;
-    border: 2px solid rgba(0,0,0,0.25);
+  }
+  .gradient-div {
+    @apply w-full;
+    filter: blur(15px);
+    height: 150px;
+    opacity: 0.5
+  }
+  .set-container {
+    @apply rounded-2xl;
+    border: 1px solid var(--accent);
+
+  }
+  ul {
+    list-style: none;       /* turn off the browser’s default bullets */
+    margin: 0;
+    padding: 0;             /* we’ll do our own indentation on the <li> */
+  }
+  ul li {
+    position: relative;     
+    padding-left: 1.5rem;   /* ← space for the icon + gap */
+    line-height: 1.2;        /* adjust to vertically center if needed */
+    background: 
+      url("/bulletpoint.svg") no-repeat 
+      left center;          /* icon at the very left, vertically centered */
+    background-size: 0.7rem;   /* match your SVG’s “font-size” */
   }
 }
 

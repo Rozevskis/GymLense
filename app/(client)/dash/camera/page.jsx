@@ -95,7 +95,7 @@ export default function AIWorkout() {
     }
   };
   return (
-    <section className="flex flex-col items-center justify-between w-full bg-white px-4 py-6">
+    <section className="flex flex-col items-center justify-between w-full px-4 py-6">
 
       {/* Camera Container */}
       {!result && (
@@ -108,9 +108,9 @@ export default function AIWorkout() {
                 <motion.div
                   className="absolute inset-0 bg-white z-50"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.8 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
+                  transition={{ duration: 0.06 }}
                 />
               )}
             </AnimatePresence>
@@ -166,7 +166,7 @@ export default function AIWorkout() {
           {showCamera ? (
             <button
               onClick={stopCamera}
-              className="w-[90%] py-3 border border-black rounded-full cursor-pointer text-black paragraph"
+              className="w-[90%] py-3 border border-[var(--foreground)] text-[var(--foreground)] rounded-full cursor-pointer paragraph"
             >
               Cancel
             </button>
@@ -174,14 +174,14 @@ export default function AIWorkout() {
             <>
               <button
                 onClick={startCamera}
-                className="w-[90%] py-3 border border-black rounded-full cursor-pointer text-black paragraph"
+                className="w-[90%] py-3 border border-[var(--accent)] rounded-full cursor-pointer paragraph"
               >
                 Retake
               </button>
               <button
                 onClick={generateWorkout}
                 disabled={loading}
-                className="w-[90%] py-3 bg-[var(--accent)] text-white rounded-full cursor-pointer disabled:bg-gray-400 paragraph"
+                className="w-[90%] py-3 bg-[var(--accent)] text-[var(--accent-darker)] rounded-full cursor-pointer disabled:bg-[var(--accent-darker)] disabled:text-[var(--accent)] paragraph"
               >
                 {loading ? 'Saving...' : 'Save'}
               </button>

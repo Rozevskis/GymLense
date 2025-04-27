@@ -159,8 +159,8 @@ export default function HealthDropdown() {
     return (
         <div className="flex flex-col w-full p-4">
             {/* Header */}
-            <button className="flex flex-row justify-between items-center cursor-pointer py-4" onClick={toggleOpen}>
-                <p className="paragraph">Health details</p>
+            <button className="flex flex-row justify-between items-center cursor-pointer py-4 text-[var(--foreground)]" onClick={toggleOpen}>
+                <p className="subheading">Health details</p>
                 <motion.img 
                     initial={{ rotate: 0 }} 
                     animate={{ rotate: isOpen ? 90 : 0 }} 
