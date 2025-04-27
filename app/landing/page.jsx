@@ -231,7 +231,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <h4 className="text-xl font-bold bg-gradient-to-r from-[#a3e635] to-[#84cc16] bg-clip-text text-transparent">GymVision</h4>
+              <h4 className="text-xl font-bold bg-gradient-to-r from-[#a3e635] to-[#84cc16] bg-clip-text text-transparent">GymLense</h4>
               <p className="text-white/70">Transforming gym experiences through AI technology</p>
             </div>
             <div>
@@ -256,7 +256,7 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-[#a3e635]/10 text-center text-white/50">2023 GymVision. All rights reserved.</div>
+          <div className="mt-12 pt-8 border-t border-[#a3e635]/10 text-center text-white/50">2025 GymLense. All rights reserved.</div>
         </div>
       </footer>
       </div>
