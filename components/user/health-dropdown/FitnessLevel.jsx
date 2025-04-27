@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function FitnessLevel({ fitnessLevel = "intermediate", onFitnessLevelChange, onSave }) {
+export default function FitnessLevel({ fitnessLevel, onFitnessLevelChange, onSave }) {
     const [fitnessLevelOpen, setFitnessLevelOpen] = useState(false)
-    const [selected, setSelected] = useState(2) // Default to intermediate (2)
+    const [selected, setSelected] = useState()
 
     // Convert fitnessLevel string to number for UI
     useEffect(() => {
@@ -28,17 +28,11 @@ export default function FitnessLevel({ fitnessLevel = "intermediate", onFitnessL
     const handleClose = () => setFitnessLevelOpen(false)
     const handleOpen = () => setFitnessLevelOpen(true)
     const handleSave = () => {
-        // Pass the updated fitness level to parent component
-        if (onFitnessLevelChange) {
-            onFitnessLevelChange(selected)
-        }
-        
-        // Call the save function from parent
-        if (onSave) {
-            onSave()
-        }
-        
+        const mapping = {1: "beginner", 2: "intermediate", 3: "advanced"}
+        const newValue = mapping[selected] || fitnessLevel
+        if (onFitnessLevelChange) onFitnessLevelChange(newValue)
         setFitnessLevelOpen(false)
+        if (onSave) onSave({ fitnessLevel: newValue })
     }
 
     // Position for the highlight div

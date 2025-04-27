@@ -12,73 +12,121 @@ import FitnessLevel from "@/components/user/health-dropdown/FitnessLevel"
 export default function HealthDropdown() {
     const [isOpen, setIsOpen] = useState(false)
     const [userData, setUserData] = useState({
-        weight: 70,
-        height: 175,
-        age: 25,
-        fitnessLevel: "beginner",
-        sex: "male"
+        weight: null,
+        height: null,
+        age: null,
+        fitnessLevel: null,
+        sex: null
     })
     const [loading, setLoading] = useState(true)
     const [updating, setUpdating] = useState(false)
 
     // Fetch user data on component mount
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('/api/user/update', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-
-                if (response.ok) {
-                    const data = await response.json()
-                    setUserData({
-                        weight: data.weight || 70,
-                        height: data.height || 175,
-                        age: data.age || 25,
-                        fitnessLevel: data.fitnessLevel || "beginner",
-                        sex: data.sex || "male"
-                    })
-                } else {
-                    console.error('Failed to fetch user data')
-                }
-            } catch (error) {
-                console.error('Error fetching user data:', error)
-            } finally {
-                setLoading(false)
-            }
-        }
-
         fetchUserData()
     }, [])
 
     const toggleOpen = () => setIsOpen(!isOpen)
 
     // Update user data in the backend
-    const updateUserData = async () => {
+    const updateUserData = async (overrides = {}) => {
         setUpdating(true)
         try {
+            // Get the latest state, merging any overrides to avoid stale values
+            const latestUserData = { ...userData, ...overrides };
+            console.log('Sending data to update (latest state):', latestUserData)
+            
+            // Create a clean copy of the data to send
+            const dataToSend = {
+                weight: Number(latestUserData.weight),
+                height: Number(latestUserData.height),
+                age: Number(latestUserData.age),
+                fitnessLevel: latestUserData.fitnessLevel,
+                sex: latestUserData.sex
+            }
+            
+            console.log('Cleaned data to send:', dataToSend)
+            
             const response = await fetch('/api/user/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(userData),
+                body: JSON.stringify(dataToSend),
+                // Prevent caching issues
+                cache: 'no-store'
             })
+
+            const result = await response.json()
+            console.log('Update response:', result)
 
             if (response.ok) {
                 toast.success('Health details updated successfully!')
+                
+                // Update local state with the returned data to ensure consistency
+                if (result.user) {
+                    setUserData({
+                        weight: result.user.weight,
+                        height: result.user.height,
+                        age: result.user.age,
+                        fitnessLevel: result.user.fitnessLevel,
+                        sex: result.user.sex
+                    });
+                } else {
+                    // If no user data returned, fetch fresh data
+                    setTimeout(() => {
+                        fetchUserData()
+                    }, 300)
+                }
             } else {
-                const error = await response.json()
-                toast.error(error.message || 'Failed to update health details')
+                toast.error(result.error || 'Failed to update health details')
             }
         } catch (error) {
             console.error('Error updating user data:', error)
             toast.error('An error occurred while updating health details')
         } finally {
             setUpdating(false)
+        }
+    }
+    
+    // Function to fetch user data
+    const fetchUserData = async () => {
+        try {
+            console.log('Fetching user data...')
+            const response = await fetch('/api/user/update', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // Add cache busting to prevent caching issues
+                cache: 'no-store'
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+                console.log('Fetched user data (raw):', data)
+                
+                // Create the new user data object with no defaults
+                const newUserData = {
+                    weight: data.weight,
+                    height: data.height,
+                    age: data.age,
+                    fitnessLevel: data.fitnessLevel,
+                    sex: data.sex
+                }
+                
+                console.log('Setting user data to:', newUserData)
+                console.log('Previous user data was:', userData)
+                
+                // Update the state with the new data
+                setUserData(newUserData)
+            } else {
+                console.error('Failed to fetch user data')
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error)
+        } finally {
+            setLoading(false)
         }
     }
 

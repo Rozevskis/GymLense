@@ -4,32 +4,36 @@ import { useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function WeightPicker({ weight = 70, onWeightChange, onSave }) {
+export default function WeightPicker({ weight, onWeightChange, onSave }) {
     const [weightOpen, setWeightOpen] = useState(false)
-    const [selectedWeight, setSelectedWeight] = useState(weight)
+    const [selectedWeight, setSelectedWeight] = useState(weight || '')
 
     // Update selected weight when prop changes
     useEffect(() => {
-        setSelectedWeight(weight)
+        if (weight !== undefined) {
+            setSelectedWeight(weight)
+        }
     }, [weight])
 
     const handleClose = () => setWeightOpen(false)
     const handleOpen = () => setWeightOpen(true)
 
     const handleSave = () => {
-        // Pass the updated weight to parent component
+        const currentValue = Number(selectedWeight);
+        console.log('Weight - Saving value:', currentValue);
         if (onWeightChange) {
-            onWeightChange(Number(selectedWeight))
+            onWeightChange(currentValue);
         }
-        // Call the save function from parent
+        setWeightOpen(false);
         if (onSave) {
-            onSave()
+            onSave({ weight: currentValue });
         }
-        setWeightOpen(false)
     }
 
     const handleWeightChange = (e) => {
-        setSelectedWeight(e.target.value)
+        const newValue = e.target.value;
+        console.log('Weight - Input changed to:', newValue);
+        setSelectedWeight(newValue);
     }
 
     return (

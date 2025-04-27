@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 
-export default function SexPicker({ sex = "male", onSexChange, onSave }) {
+export default function SexPicker({ sex, onSexChange, onSave }) {
     const [sexOpen, setSexOpen] = useState(false)
-    const [selected, setSelected] = useState(1)
+    const [selected, setSelected] = useState()
 
     // Convert sex string to number for UI
     useEffect(() => {
@@ -31,18 +31,9 @@ export default function SexPicker({ sex = "male", onSexChange, onSave }) {
     const handleSave = () => {
         // Convert number to string value for database
         const sexValue = selected === 1 ? "male" : selected === 2 ? "female" : "other"
-        
-        // Pass the updated sex to parent component
-        if (onSexChange) {
-            onSexChange(sexValue)
-        }
-        
-        // Call the save function from parent
-        if (onSave) {
-            onSave()
-        }
-        
+        if (onSexChange) onSexChange(sexValue)
         setSexOpen(false)
+        if (onSave) onSave({ sex: sexValue })
     }
 
     // Position for the highlight div
