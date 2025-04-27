@@ -12,6 +12,10 @@ import { usePathname } from "next/navigation";
 export default function RootLayout({ children }) {
 
   const pathname = usePathname();
+
+  // const lenis = new Lenis({
+  //   autoRaf: true,
+  // });
   const [activePage, setActivePage] = useState(pathname);
 
   useEffect(() => {

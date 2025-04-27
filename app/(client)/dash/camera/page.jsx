@@ -124,11 +124,11 @@ export default function AIWorkout() {
             audio={false}
             screenshotFormat="image/jpeg"
             videoConstraints={{
-                facingMode: { ideal: 'user' },
+                facingMode: { ideal: 'environment' },
                 width: { ideal: 1280 },
                 height: { ideal: 720 },
             }}
-            mirrored
+            mirrored={false}
             playsInline
             style={{
                 width: '100%',
