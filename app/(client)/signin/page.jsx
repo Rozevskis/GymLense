@@ -165,7 +165,7 @@ function SignInClient() {
     };
 
     return (
-        <section className="min-h-[100dvh] w-full flex flex-col justify-center items-center py-10">
+        <section className="min-h-[100dvh] w-full flex flex-col pt-10 pb-10 items-center py-10">
             <div className="w-full max-w-md px-4">
                 <h1 className="mb-5 heading text-center">Gym<span className="blue-span">Lense</span></h1>
                 
@@ -173,13 +173,13 @@ function SignInClient() {
                 <div className="flex mb-6 border-b">
                     <button 
                         onClick={() => setIsLogin(true)}
-                        className={`flex-1 py-2 font-medium ${isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                        className={`flex-1 py-2 font-medium ${isLogin ? 'text-[var(--accent)] subheading border-b-2 border-[var(--accent)] subheading' : 'text-gray-500 subheading'}`}
                     >
                         Login
                     </button>
                     <button 
                         onClick={() => setIsLogin(false)}
-                        className={`flex-1 py-2 font-medium ${!isLogin ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
+                        className={`flex-1 py-2 font-medium ${!isLogin ? 'text-[var(--accent)] border-b-2 border-[var(--accent)] subheading' : 'text-gray-500 subheading'}`}
                     >
                         Register
                     </button>
@@ -224,7 +224,7 @@ function SignInClient() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="w-full bg-[var(--accent)] text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                         >
                             {loading ? 'Logging in...' : 'Login'}
                         </button>
@@ -331,35 +331,6 @@ function SignInClient() {
                         </button>
                     </form>
                 )}
-                
-                {/* OAuth buttons */}
-                <div className="mt-6">
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-300"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                        </div>
-                    </div>
-                    
-                    <div className="mt-6 grid grid-cols-2 gap-3">
-                        <button 
-                            onClick={() => handleOAuthSignIn('google')}
-                            className="sign-in-button flex justify-center gap-2 items-center w-full"
-                        >
-                            <Image src="/google-logo.svg" height={19} width={19} alt="Google logo" />
-                            Google
-                        </button>
-                        <button 
-                            onClick={() => handleOAuthSignIn('apple')}
-                            className="sign-in-button flex justify-center gap-2 items-center w-full"
-                        >
-                            <Image src="/apple-logo.svg" height={19} width={19} alt="Apple logo" />
-                            Apple
-                        </button>
-                    </div>
-                </div>
             </div>
         </section>
     );

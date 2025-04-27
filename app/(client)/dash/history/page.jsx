@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import PageLoader from "@/components/animations/PageLoader"
 
 export default function History() {
   const [responses, setResponses] = useState([]);
@@ -25,11 +26,11 @@ export default function History() {
     loadHistory();
   }, []);
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) return <div className="p-4"><PageLoader /></div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
-    <section className="w-full px-2 bg-[var(--accent)] min-h-[80dvh] py-10">
+    <section className="w-full px-2 min-h-[80dvh] py-10">
       <div className="grid grid-cols-1 gap-4">
         {responses.map(item => (
           <div

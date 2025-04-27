@@ -46,11 +46,6 @@ export default function PageLoader({ children }) {
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Suspense goes here */}
-            <Suspense fallback={null}>
-                {!isLoading && children}
-            </Suspense>
         </>
     )
 }

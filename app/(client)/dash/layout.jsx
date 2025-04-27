@@ -4,7 +4,7 @@ import DashFooter from "@/components/DashFooter";
 import DashHeader from "@/components/DashHeader";
 import PageLoader from "@/components/animations/PageLoader"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }) {
@@ -19,9 +19,9 @@ export default function RootLayout({ children }) {
     <div className="flex flex-col w-full h-full">
       <DashHeader activePage={activePage}/>
       <main className="flex-1 w-full">
-        <PageLoader>
+          <Suspense fallback={<PageLoader />}>
           {children}
-        </PageLoader>
+          </Suspense>
       </main>
       <DashFooter activePage={activePage} />
     </div>

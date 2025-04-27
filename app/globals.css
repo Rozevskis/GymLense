@@ -1,15 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
-
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
 @import "tailwindcss";
-@font-face {
-  font-family: 'Bricolage Grotesque';
-  font-style: normal;
-  /* covers the optical size axis from 12–96 and weight from 200–800 */
-  font-weight: 200 800;
-  font-stretch: 12% 96%;
-  font-display: swap;
-  src: url('/BricolageGrotesque-VariableFont_opsz,wght.ttf') format('truetype');
-}
 
 :root {
   --background: #FFF8F8;

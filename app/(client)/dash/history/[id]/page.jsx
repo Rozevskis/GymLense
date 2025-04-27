@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import PageLoader from "@/components/animations/PageLoader"
 
 export default function HistoryDetail() {
   const params = useParams();
@@ -28,7 +29,7 @@ export default function HistoryDetail() {
     load();
   }, [id]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) return <div className="p-4"><PageLoader /></div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   const { response, image } = workout;

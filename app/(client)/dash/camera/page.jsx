@@ -116,6 +116,7 @@ export default function AIWorkout() {
             </AnimatePresence>
 
 
+
             {showCamera ? (
             <Webcam
             key={showCamera ? 'camera-on' : 'camera-off'}
@@ -123,11 +124,11 @@ export default function AIWorkout() {
             audio={false}
             screenshotFormat="image/jpeg"
             videoConstraints={{
-                facingMode: { ideal: 'environment' },
+                facingMode: { ideal: 'user' },
                 width: { ideal: 1280 },
                 height: { ideal: 720 },
             }}
-            mirrored={false}
+            mirrored
             playsInline
             style={{
                 width: '100%',
