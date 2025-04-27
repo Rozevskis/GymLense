@@ -135,6 +135,7 @@ export default function AIWorkout() {
                 left: 0,
             }}
             />
+            
         ) : capturedImage ? (
             <Image
             src={capturedImage}
