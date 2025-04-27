@@ -23,11 +23,7 @@ export async function middleware(request) {
 
   // Redirect index page based on auth state
   if (pathname === '/') {
-    const token = request.cookies.get('token')?.value;
-    const isAuth = token && await verifyToken(token);
-    const target = isAuth ? '/dash/user' : '/signin';
-    const url = new URL(target, request.url);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/landing', request.nextUrl.origin), 308);
   }
 
   // Public paths that don't require authentication
