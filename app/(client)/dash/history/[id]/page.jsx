@@ -47,7 +47,7 @@ export default function HistoryDetail() {
             alt={response.name_of_equipment}
             className="w-full h-auto object-cover rounded-md mb-4"
         />
-        <h2 className="heading text-center mb-4">{response.name_of_equipment}</h2>
+        <h2 className="heading text-center mb-4 leading-tight">{response.name_of_equipment}</h2>
         <p className="text-[var(--foreground-darker)] paragraph text-center">{response.description}</p>
 
         <div className="grid grid-cols-2 gap-6 mt-4">
