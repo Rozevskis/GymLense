@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Webcam from 'react-webcam';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const DEFAULT_USER_PROFILE = {
   weight: 73,
@@ -19,8 +20,9 @@ export default function AIWorkout() {
   const [showCamera, setShowCamera] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState(null);
   const [flash, setFlash] = useState(false);
+  const router = useRouter();
+  const [result] = useState(null);
 
   const videoConstraints = {
     facingMode: "user"
@@ -41,14 +43,12 @@ export default function AIWorkout() {
   const startCamera = () => {
     setCapturedImage(null);
     setShowCamera(true);
-    setResult(null);
     setError('');
   };
 
   const stopCamera = () => {
     setCapturedImage(null);
     setShowCamera(false);
-    setResult(null);
     setError('');
   };
 
@@ -60,7 +60,6 @@ export default function AIWorkout() {
 
     setLoading(true);
     setError('');
-    setResult(null);
 
     try {
       const base64Data = capturedImage.split(',')[1];
@@ -69,7 +68,7 @@ export default function AIWorkout() {
       const formData = new FormData();
       formData.append('image', blob, 'equipment.jpg');
       formData.append('userProfile', JSON.stringify(DEFAULT_USER_PROFILE));
-      formData.append('useSampleResponse', 'false'); // ✅ REAL detection, not sample
+      formData.append('useSampleResponse', 'false'); // REAL detection, not sample
 
       const response = await fetch('/api/ai/generate-workout', {
         method: 'POST',
@@ -82,7 +81,12 @@ export default function AIWorkout() {
       }
 
       const data = await response.json();
-      setResult(data);
+      // For smome stupid reason this doesnt work here but works in history page
+      // router.push(`/dash/history/${data.id}`);
+      // Force navigation with window.location instead of router.push
+      if (data.id) {
+        window.location.href = `/dash/history/${data.id}`;
+      }
     } catch (err) {
       console.error('API error:', err);
       setError(err.message);
@@ -183,83 +187,6 @@ export default function AIWorkout() {
             </>
           )}
         </div>
-      )}
-
-      {/* Workout Plan Result */}
-      {result && (
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mt-6 w-full bg-[var(--background-darker)] rounded-xl p-6 space-y-6 shadow-lg py-30"
-        >
-          <h2 className="heading text-center mb-4">{result.name_of_equipment}</h2>
-          <p className="text-gray-700 paragraph text-center">{result.description}</p>
-
-          <div className="grid grid-cols-2 gap-6 mt-4">
-            <div>
-              <h3 className=" mb-2 subheading">Primary Muscles</h3>
-              <ul className="list-disc list-inside text-gray-600 paragraph">
-                {result.targeted_muscles.primary.map((muscle, idx) => (
-                  <li key={idx}>{muscle}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className=" mb-2 subheading">Secondary Muscles</h3>
-              <ul className="list-disc list-inside text-gray-600 paragraph">
-                {result.targeted_muscles.secondary.map((muscle, idx) => (
-                  <li key={idx}>{muscle}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <h3 className=" mb-2 subheading">Workout Sets</h3>
-            <div className="space-y-3">
-              {result.recommended_repetitions.map((set, idx) => (
-                <div key={idx} className="p-3 bg-white rounded-lg shadow">
-                  <div className='paragraph py-1'>Set: {set.set}</div>
-                  <div className='paragraph py-1'>Type: {set.type}</div>
-                  <div className='paragraph py-1'>Weight: {set.weight}</div>
-                  <div className='paragraph py-1'>Reps: {set.repetitions}</div>
-                  <div className='paragraph py-1'>Rest: {set.rest_time}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <h3 className="subheading mb-2">Form Tips</h3>
-            <ul className="list-disc list-inside text-gray-600 paragraph">
-              {result.form_tips.map((tip, idx) => (
-                <li key={idx}>{tip}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-4">
-            <h3 className="subheading mb-2">Safety Considerations</h3>
-            <ul className="list-disc list-inside text-gray-600 paragraph">
-              {result.safety_considerations.map((safety, idx) => (
-                <li key={idx}>{safety}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-4">
-            <h3 className="subheading mb-2">Recommended Warmup</h3>
-            <p className="text-gray-600 paragraph">{result.recommended_warmup}</p>
-          </div>
-
-          <button
-            onClick={startCamera}
-            className="w-full py-3 cursor-pointer text-white rounded-full paragraph bg-[var(--accent)] mt-6"
-          >
-            Take Another Picture
-          </button>
-        </motion.div>
       )}
 
       {/* Error Message */}

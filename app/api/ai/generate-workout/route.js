@@ -224,11 +224,13 @@ export async function POST(req) {
             const { payload } = await jwtVerify(token, secret);
             userId = payload.id;
           }
-          await WorkoutResponse.create({ userId, response: jsonResponse, image: originalBase64 });
+          const saved = await WorkoutResponse.create({ userId, response: jsonResponse, image: originalBase64 });
+          return NextResponse.json({ id: saved._id, ...jsonResponse });
         } catch (dbError) {
           console.error('Failed to save workout response:', dbError);
+          // Still return the response even if DB save fails
+          return NextResponse.json(jsonResponse);
         }
-        return NextResponse.json(jsonResponse);
       } catch (parseError) {
         console.error('Failed to parse AI response:', response.choices[0].message.content);
         return NextResponse.json(
