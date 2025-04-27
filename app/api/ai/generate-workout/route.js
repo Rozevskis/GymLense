@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import path from 'path';
 import { optimizeImage } from '@/utils/imageUtils';
+import connectDB from '@/utils/db';
+import WorkoutResponse from '@/models/WorkoutResponse';
+import { jwtVerify } from 'jose';
 
 // Initialize OpenAI only if API key is present
 let openai;
@@ -208,6 +211,20 @@ export async function POST(req) {
           throw new Error('No JSON found in response');
         }
         const jsonResponse = JSON.parse(jsonMatch[0]);
+        // Persist the AI response
+        await connectDB();
+        try {
+          const token = req.cookies.get('token')?.value;
+          let userId = null;
+          if (token) {
+            const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
+            const { payload } = await jwtVerify(token, secret);
+            userId = payload.id;
+          }
+          await WorkoutResponse.create({ userId, response: jsonResponse });
+        } catch (dbError) {
+          console.error('Failed to save workout response:', dbError);
+        }
         return NextResponse.json(jsonResponse);
       } catch (parseError) {
         console.error('Failed to parse AI response:', response.choices[0].message.content);
@@ -234,5 +251,3 @@ export async function POST(req) {
     );
   }
 }
-
-

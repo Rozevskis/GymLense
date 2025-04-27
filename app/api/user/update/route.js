@@ -107,15 +107,7 @@ export async function GET(req) {
       console.log('GET - User not found');
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
-    console.log('GET - Found user data:', {
-      _id: user._id,
-      weight: user.weight,
-      height: user.height,
-      age: user.age,
-      fitnessLevel: user.fitnessLevel,
-      sex: user.sex
-    });
+  
 
     // Set cache control headers to prevent caching
     const response = NextResponse.json(user);
