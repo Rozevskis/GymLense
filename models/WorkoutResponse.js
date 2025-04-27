@@ -7,4 +7,4 @@ const WorkoutResponseSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model('WorkoutResponse', WorkoutResponseSchema);
+export default mongoose.models.WorkoutResponse || mongoose.model('WorkoutResponse', WorkoutResponseSchema);

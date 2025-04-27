@@ -130,8 +130,11 @@ export async function POST(req) {
 
     // Convert image to buffer and optimize
     let imageResult;
+    let originalBase64;
     try {
       const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
+      // Save original uncompressed image as base64
+      originalBase64 = imageBuffer.toString('base64');
       imageResult = await optimizeImage(imageBuffer, true);
       
       // Log optimization details
@@ -221,7 +224,7 @@ export async function POST(req) {
             const { payload } = await jwtVerify(token, secret);
             userId = payload.id;
           }
-          await WorkoutResponse.create({ userId, response: jsonResponse, image: imageResult.base64Data });
+          await WorkoutResponse.create({ userId, response: jsonResponse, image: originalBase64 });
         } catch (dbError) {
           console.error('Failed to save workout response:', dbError);
         }
