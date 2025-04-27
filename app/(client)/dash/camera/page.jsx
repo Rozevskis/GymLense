@@ -90,14 +90,13 @@ export default function AIWorkout() {
       setLoading(false);
     }
   };
-
   return (
     <section className="flex flex-col items-center justify-between w-full bg-white px-4 py-6">
 
       {/* Camera Container */}
       {!result && (
         <div className="flex-1 w-full flex items-center justify-center py-4">
-          <div className="w-[90%] h-[60dvh] bg-black rounded-2xl overflow-hidden flex items-center justify-center relative">
+          <div className="w-[90%] h-[60dvh] bg-[var(--background-darker)] rounded-2xl overflow-hidden flex items-center justify-center relative">
 
             {/* Flash Animation */}
             <AnimatePresence>
@@ -112,13 +111,15 @@ export default function AIWorkout() {
               )}
             </AnimatePresence>
 
+
+            {showCamera ? (
             <Webcam
-            key={showCamera ? 'camera-on' : 'camera-off'} // force re-render when toggling
+            key={showCamera ? 'camera-on' : 'camera-off'}
             ref={webcamRef}
             audio={false}
             screenshotFormat="image/jpeg"
             videoConstraints={{
-                facingMode: { ideal: 'user' }, // ← safer on mobile!
+                facingMode: { ideal: 'user' },
                 width: { ideal: 1280 },
                 height: { ideal: 720 },
             }}
@@ -134,13 +135,22 @@ export default function AIWorkout() {
                 left: 0,
             }}
             />
+            
+        ) : capturedImage ? (
+            <Image
+            src={capturedImage}
+            alt="Captured"
+            fill
+            className="object-contain rounded-2xl"
+            />
+        ) : null}
 
-            {showCamera && (
-              <button
-                onClick={capture}
-                className="absolute bottom-4 w-16 h-16 rounded-full border-4 border-white hover:scale-110 transition-transform duration-300 z-40"
-              />
-            )}
+        {showCamera && (
+            <button
+            onClick={capture}
+            className="absolute bottom-4 w-16 h-16 rounded-full border-4 border-white hover:scale-110 transition-transform duration-300 z-40"
+            />
+        )}
           </div>
         </div>
       )}
