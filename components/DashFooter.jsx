@@ -10,7 +10,7 @@ export default function DashFooter({ activePage }) {
         initial={{ y: "100%" }}
         animate={{ y: "0%" }}
         transition={{ ease: [0,1,.77,.98], duration: 0.7 }}
-        className="w-full max-w-lg p-2 fixed bottom-0 z-500">
+        className="w-full max-w-lg p-2 fixed bottom-0 z-500 pb-15">
             <nav className="bg-[var(--accent)] h-[64px] rounded-full flex justify-evenly items-center">
                 <Link href="/dash/history"><motion.img 
                 initial={ activePage === "/dash/history" ? { opacity: 1, scale: 1 } : { opacity: 0.8, scale: 0.9 } }  
