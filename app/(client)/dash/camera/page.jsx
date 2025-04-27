@@ -112,28 +112,33 @@ export default function AIWorkout() {
               )}
             </AnimatePresence>
 
-            {showCamera ? (
-                <Webcam
-                ref={webcamRef}
-                audio={false}
-                screenshotFormat="image/jpeg"
-                videoConstraints={videoConstraints}
-                playsInline // <- THIS IS IMPORTANT FOR MOBILE
-                className="absolute top-0 left-0 w-full h-full object-cover"
-                />
-            ) : capturedImage ? (
-              <Image
-                src={capturedImage}
-                alt="Captured"
-                fill
-                className="object-contain rounded-2xl"
-              />
-            ) : null}
+            <Webcam
+            key={showCamera ? 'camera-on' : 'camera-off'} // force re-render when toggling
+            ref={webcamRef}
+            audio={false}
+            screenshotFormat="image/jpeg"
+            videoConstraints={{
+                facingMode: { ideal: 'user' }, // ← safer on mobile!
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+            }}
+            mirrored
+            playsInline
+            style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '1rem',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+            }}
+            />
 
             {showCamera && (
               <button
                 onClick={capture}
-                className="absolute bottom-4 w-16 h-16 bg-white rounded-full border-4 border-gray-300 hover:scale-110 transition-transform duration-300 z-40"
+                className="absolute bottom-4 w-16 h-16 rounded-full border-4 border-white hover:scale-110 transition-transform duration-300 z-40"
               />
             )}
           </div>
