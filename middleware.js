@@ -21,6 +21,15 @@ async function verifyToken(token) {
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
+  // Redirect index page based on auth state
+  if (pathname === '/') {
+    const token = request.cookies.get('token')?.value;
+    const isAuth = token && await verifyToken(token);
+    const target = isAuth ? '/dash/user' : '/signin';
+    const url = new URL(target, request.url);
+    return NextResponse.redirect(url);
+  }
+
   // Public paths that don't require authentication
   const publicPaths = [
     '/',
