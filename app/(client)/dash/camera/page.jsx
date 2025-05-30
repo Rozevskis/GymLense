@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Webcam from 'react-webcam';
 import Image from 'next/image';
@@ -21,12 +21,9 @@ export default function AIWorkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [flash, setFlash] = useState(false);
+  const [cameraLoading, setCameraLoading] = useState(true);
   const router = useRouter();
   const [result] = useState(null);
-
-  const videoConstraints = {
-    facingMode: "user"
-  };
 
   const capture = useCallback(() => {
     if (webcamRef.current) {
@@ -43,6 +40,7 @@ export default function AIWorkout() {
   const startCamera = () => {
     setCapturedImage(null);
     setShowCamera(true);
+    setCameraLoading(true);
     setError('');
   };
 
@@ -81,9 +79,6 @@ export default function AIWorkout() {
       }
 
       const data = await response.json();
-      // For some stupid reason this doesn't work here but works in history page
-      // router.push(`/dash/history/${data.id}`);
-      // Force navigation with window.location instead of router.push
       if (data.id) {
         window.location.href = `/dash/history/${data.id}`;
       }
@@ -94,14 +89,27 @@ export default function AIWorkout() {
       setLoading(false);
     }
   };
+  
   return (
     <section className="flex flex-col items-center justify-between w-full px-4 py-6">
+      {/* Loading overlay for API response */}
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#a3e635]/20 z-50">
+          <div className="relative w-48 h-48">
+            <Image 
+              src="/lift-unscreen.gif" 
+              alt="Loading" 
+              fill 
+              className="object-contain"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Camera Container */}
       {!result && (
         <div className="flex-1 w-full flex items-center justify-center py-4">
           <div className="w-[90%] h-[60dvh] bg-[var(--background-darker)] rounded-2xl overflow-hidden flex items-center justify-center relative">
-
             {/* Flash Animation */}
             <AnimatePresence>
               {flash && (
@@ -115,87 +123,94 @@ export default function AIWorkout() {
               )}
             </AnimatePresence>
 
-
-
             {showCamera ? (
-            <Webcam
-            key={showCamera ? 'camera-on' : 'camera-off'}
-            ref={webcamRef}
-            audio={false}
-            screenshotFormat="image/jpeg"
-            videoConstraints={{
-                facingMode: { ideal: 'environment' },
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-            }}
-            mirrored={false}
-            playsInline
-            style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                borderRadius: '1rem',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-            }}
-            />
-            
-        ) : capturedImage ? (
-            <Image
-            src={capturedImage}
-            alt="Captured"
-            fill
-            className="object-contain rounded-2xl"
-            />
-        ) : null}
+              <>
+                <Webcam
+                  key={showCamera ? 'camera-on' : 'camera-off'}
+                  ref={webcamRef}
+                  audio={false}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={{
+                    facingMode: { ideal: 'environment' },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                  }}
+                  mirrored={false}
+                  playsInline
+                  onUserMedia={() => setCameraLoading(false)}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '1rem',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    opacity: cameraLoading ? 0 : 1, // Hide camera until loaded
+                  }}
+                />
+                
+                {/* Camera Loading Animation */}
+                {cameraLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#a3e635]/20 z-10">
+                    <div className="relative w-48 h-48">
+                      <Image 
+                        src="/lift-unscreen.gif" 
+                        alt="Loading" 
+                        fill 
+                        className="object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : capturedImage ? (
+              <Image
+                src={capturedImage}
+                alt="Captured"
+                fill
+                className="object-contain rounded-2xl"
+              />
+            ) : null}
 
-        {showCamera && (
-            <button
-            onClick={capture}
-            className="absolute bottom-4 w-16 h-16 rounded-full border-4 border-white hover:scale-110 transition-transform duration-300 z-40"
-            />
-        )}
+            {showCamera && (
+              <button
+                onClick={capture}
+                className="absolute bottom-4 w-16 h-16 rounded-full border-4 border-white hover:scale-110 transition-transform duration-300 z-40"
+              />
+            )}
           </div>
         </div>
       )}
 
       {/* Bottom Buttons */}
-      {!result && (
-        <div className="w-full flex flex-col items-center space-y-4 mt-4">
-          {showCamera ? (
+      <div className="w-full flex flex-col items-center space-y-4 mt-6">
+        {error && <p className="text-red-500">{error}</p>}
+        {showCamera ? (
+          <button
+            onClick={capture}
+            className="w-[90%] py-3 bg-[var(--accent)] text-[var(--accent-darker)] rounded-full cursor-pointer paragraph"
+          >
+            Take Picture
+          </button>
+        ) : (
+          <div className="w-full flex flex-col items-center space-y-4">
             <button
-              onClick={stopCamera}
-              className="w-[90%] py-3 border border-[var(--foreground)] text-[var(--foreground)] rounded-full cursor-pointer paragraph"
+              onClick={startCamera}
+              className="w-[90%] py-3 border border-[var(--accent)] rounded-full cursor-pointer paragraph"
             >
-              Cancel
+              Retake
             </button>
-          ) : (
-            <>
-              <button
-                onClick={startCamera}
-                className="w-[90%] py-3 border border-[var(--accent)] rounded-full cursor-pointer paragraph"
-              >
-                Retake
-              </button>
-              <button
-                onClick={generateWorkout}
-                disabled={loading}
-                className="w-[90%] py-3 bg-[var(--accent)] text-[var(--accent-darker)] rounded-full cursor-pointer disabled:bg-[var(--accent-darker)] disabled:text-[var(--accent)] paragraph"
-              >
-                {loading ? 'Saving...' : 'Save'}
-              </button>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div className="mt-4 w-[90%] bg-red-100 text-red-700 p-4 rounded-lg">
-          {error}
-        </div>
-      )}
+            <button
+              onClick={generateWorkout}
+              disabled={loading}
+              className="w-[90%] py-3 bg-[var(--accent)] text-[var(--accent-darker)] rounded-full cursor-pointer disabled:bg-[var(--accent-darker)] disabled:text-[var(--accent)] paragraph"
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        )}
+      </div>
     </section>
   );
 }
